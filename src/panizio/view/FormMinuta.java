@@ -44,7 +44,7 @@ public class FormMinuta extends javax.swing.JFrame {
     public FormMinuta() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.conex = new ConexaoBanco();        
+        this.conex = new ConexaoBanco();
     }
 
     /**
@@ -80,7 +80,7 @@ public class FormMinuta extends javax.swing.JFrame {
         jScrollPane3 = new javax.swing.JScrollPane();
         tblMinutas = new javax.swing.JTable();
         jPanel1 = new javax.swing.JPanel();
-        radioDestino = new javax.swing.JRadioButton();
+        radioNF = new javax.swing.JRadioButton();
         radioDestinatario = new javax.swing.JRadioButton();
         radioRemetente = new javax.swing.JRadioButton();
         radioNumero = new javax.swing.JRadioButton();
@@ -89,6 +89,7 @@ public class FormMinuta extends javax.swing.JFrame {
         btnPesquisar = new javax.swing.JButton();
         popUpConsultar = new javax.swing.JPopupMenu();
         popVisualizar = new javax.swing.JMenuItem();
+        popRemover = new javax.swing.JMenuItem();
         filtros = new javax.swing.ButtonGroup();
         formPesquisar = new javax.swing.JDialog();
         txtPesquisa = new javax.swing.JTextField();
@@ -365,20 +366,15 @@ public class FormMinuta extends javax.swing.JFrame {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        filtros.add(radioDestino);
-        radioDestino.setText("Nota Fiscal");
-        radioDestino.setActionCommand("N.NF");
-        radioDestino.setFocusable(false);
+        filtros.add(radioNF);
+        radioNF.setText("Nota Fiscal");
+        radioNF.setActionCommand("N.NF");
+        radioNF.setFocusable(false);
 
         filtros.add(radioDestinatario);
         radioDestinatario.setText("Destinatário");
         radioDestinatario.setActionCommand("D.NOME");
         radioDestinatario.setFocusable(false);
-        radioDestinatario.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                radioDestinatarioActionPerformed(evt);
-            }
-        });
 
         filtros.add(radioRemetente);
         radioRemetente.setText("Rementente");
@@ -420,7 +416,7 @@ public class FormMinuta extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(radioDestinatario)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(radioDestino))
+                        .addComponent(radioNF))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(txtPesquisa1, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -441,7 +437,7 @@ public class FormMinuta extends javax.swing.JFrame {
                     .addComponent(radioDestinatario)
                     .addComponent(radioRemetente)
                     .addComponent(radioNumero)
-                    .addComponent(radioDestino))
+                    .addComponent(radioNF))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtPesquisa1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -458,6 +454,15 @@ public class FormMinuta extends javax.swing.JFrame {
             }
         });
         popUpConsultar.add(popVisualizar);
+
+        popRemover.setText("EXCLUIR");
+        popRemover.setActionCommand("EXCLUIR");
+        popRemover.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                popRemoverActionPerformed(evt);
+            }
+        });
+        popUpConsultar.add(popRemover);
 
         formPesquisar.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         formPesquisar.setMinimumSize(new java.awt.Dimension(625, 458));
@@ -1197,7 +1202,9 @@ public class FormMinuta extends javax.swing.JFrame {
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
         if (!AtributosGlobais.usuario.getPerfil().equals("ADMINISTRADOR")) {
-            subUsuarios.setEnabled(false);
+            subUsuarios.setEnabled(false);                       
+        }else if(AtributosGlobais.usuario.getPerfil().equals("PADRAO")){           
+            popRemover.setEnabled(false); 
         }
         AtributosGlobais.minutaAtual = new MinutaDAO().obterProximo();
         txtUsuario.setText(AtributosGlobais.usuario.getLogin());
@@ -1292,7 +1299,7 @@ public class FormMinuta extends javax.swing.JFrame {
                     txtPeso.getText(), txtValorNF.getText(), txtNF.getText());
             if (new Nota_FiscalDAO().inserir(nf)) {
 
-                Minuta min = new Minuta(txtEmissao.getText() + txtHora.getText(),txtValorNF.getText(), AtributosGlobais.usuario.getId(), AtributosGlobais.ID_DESTINATARIO,
+                Minuta min = new Minuta(txtEmissao.getText() + txtHora.getText(), txtValorNF.getText(), AtributosGlobais.usuario.getId(), AtributosGlobais.ID_DESTINATARIO,
                         AtributosGlobais.ID_REMETENTE, txtObservacao.getText(), AtributosGlobais.ID_NF);
                 min.setId(Integer.parseInt(txtMinuta.getText()));
 
@@ -1447,9 +1454,9 @@ public class FormMinuta extends javax.swing.JFrame {
      */
     private void btnCancelar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar2ActionPerformed
         List<Component> camposLimpar = Arrays.asList(txtNome, txtEndereco, txtCidade, txtEstado, txtNumero, txtTelefone, txtCEP, txtCNPJ);
-        
-        ManipularCampos.limparCampos(camposLimpar);     
-        formatarCamposPesquisa();    
+
+        ManipularCampos.limparCampos(camposLimpar);
+        formatarCamposPesquisa();
         txtNome.requestFocus();
     }//GEN-LAST:event_btnCancelar2ActionPerformed
 
@@ -1465,13 +1472,13 @@ public class FormMinuta extends javax.swing.JFrame {
 
                 if (filtros.getSelection() == radioNumero) {
                     filtro = Integer.parseInt(filtros.getSelection().getActionCommand());
-                }                
-                
+                }
+
                 String sql = "SELECT M.ID_MINUTA, R.NOME, D.NOME, N.NF "
-                           + "FROM MINUTA M, REMETENTE R, DESTINATARIO D, NOTA_FISCAL N "
-                           + "WHERE M.ID_NF = N.ID_NF AND M.ID_REMETENTE = R.ID_REMETENTE AND "
-                           + "M.ID_DESTINATARIO = D.ID_DESTINATARIO AND " + filtro + " LIKE '" 
-                           + txtPesquisa1.getText().toUpperCase() + "%' ORDER BY 1 DESC";
+                        + "FROM MINUTA M, REMETENTE R, DESTINATARIO D, NOTA_FISCAL N "
+                        + "WHERE M.ID_NF = N.ID_NF AND M.ID_REMETENTE = R.ID_REMETENTE AND "
+                        + "M.ID_DESTINATARIO = D.ID_DESTINATARIO AND " + filtro + " LIKE '"
+                        + txtPesquisa1.getText().toUpperCase() + "%' ORDER BY 1 DESC";
 
                 preencherTabela((DefaultTableModel) tblMinutas.getModel(), sql);
             }
@@ -1501,13 +1508,13 @@ public class FormMinuta extends javax.swing.JFrame {
 
     private void popVisualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_popVisualizarActionPerformed
         int id_minuta = (int) tblMinutas.getValueAt(tblMinutas.getSelectedRow(), 0);
-        
-        Minuta minuta = new MinutaDAO().obterMinuta(id_minuta);
+
+        Minuta minuta = new MinutaDAO().obter(id_minuta);
         Remetente remetente = new RemetenteDAO().obterRemetente(minuta.getId_remetente());
         Destinatario destinatario = new DestinatarioDAO().obterDestinatario(minuta.getId_destinatario());
         Nota_Fiscal nf = new Nota_FiscalDAO().obterNotaFiscal(minuta.getId_nf());
         Usuario usuario = new UsuarioDAO().obterUsuario(minuta.getId_usuario());
-        
+
         Map<String, Object> parametrosRelatorio = new HashMap<>();
         //PRIMEIRO PAINEL - DADOS NOTA E MINUTA
         //variavel ireport, campo java
@@ -1515,7 +1522,7 @@ public class FormMinuta extends javax.swing.JFrame {
         parametrosRelatorio.put("nf_valor", nf.getValor());
         parametrosRelatorio.put("peso", nf.getPeso());
         parametrosRelatorio.put("vol", nf.getQtdVolumes());
-        
+
         parametrosRelatorio.put("cub", nf.getMetCubicos());
         parametrosRelatorio.put("nome_usuario", usuario.getLogin());
         parametrosRelatorio.put("id_minuta", minuta.getId());
@@ -1545,8 +1552,8 @@ public class FormMinuta extends javax.swing.JFrame {
         parametrosRelatorio.put("dest_numero", destinatario.getNumero());
 
         //QUARTO PAINEL - OBSERVAÇÃO
-        parametrosRelatorio.put("obs", minuta.getObs().isEmpty() ? " " : minuta.getObs());        
-        
+        parametrosRelatorio.put("obs", minuta.getObs().isEmpty() ? " " : minuta.getObs());
+
         formConsultar.dispose();
         imprimirMinuta(parametrosRelatorio, (int) parametrosRelatorio.get("id_minuta"));
     }//GEN-LAST:event_popVisualizarActionPerformed
@@ -1722,10 +1729,10 @@ public class FormMinuta extends javax.swing.JFrame {
         parametrosRelatorio.put("notas", txtNF.getText());
         parametrosRelatorio.put("nf_valor", txtValorNF.getText());
         parametrosRelatorio.put("peso", txtPeso.getText());
-        parametrosRelatorio.put("vol", Integer.parseInt( txtVolumes.getText() ));
+        parametrosRelatorio.put("vol", Integer.parseInt(txtVolumes.getText()));
         parametrosRelatorio.put("cub", txtCubico.getText());
         parametrosRelatorio.put("nome_usuario", txtUsuario.getText());
-        parametrosRelatorio.put("id_minuta", Integer.parseInt( txtMinuta.getText() ));        
+        parametrosRelatorio.put("id_minuta", Integer.parseInt(txtMinuta.getText()));
         parametrosRelatorio.put("emissao", txtEmissao.getText() + " " + txtHora.getText());
         parametrosRelatorio.put("minuta_valor", txtValorMinuta.getText());
 
@@ -1751,8 +1758,8 @@ public class FormMinuta extends javax.swing.JFrame {
 
         //QUARTO PAINEL - OBSERVAÇÃO
         parametrosRelatorio.put("obs", txtObservacao.getText().isEmpty() ? " " : txtObservacao.getText());
-        
-        imprimirMinuta(parametrosRelatorio, Integer.parseInt( txtMinuta.getText() ));
+
+        imprimirMinuta(parametrosRelatorio, Integer.parseInt(txtMinuta.getText()));
     }//GEN-LAST:event_btnImprimirActionPerformed
 
     private void txtPesquisaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisaKeyPressed
@@ -1763,21 +1770,26 @@ public class FormMinuta extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtPesquisaKeyPressed
 
-    private void radioDestinatarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioDestinatarioActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_radioDestinatarioActionPerformed
+    private void popRemoverActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_popRemoverActionPerformed
+        int opcao = JOptionPane.showConfirmDialog(this, "Deseja realmente excluir?", "Confirme a exclusão da Minuta", JOptionPane.YES_NO_OPTION);
+
+        if (opcao == JOptionPane.YES_OPTION) {
+            //Usuário clicou em Sim. Executar o código correspondente.
+            new MinutaDAO().remover((int) tblMinutas.getValueAt(tblMinutas.getSelectedRow(), 0));
+        } 
+    }//GEN-LAST:event_popRemoverActionPerformed
 
     /**
      * Imprime a minuta atual, recém feita ainda em cache.
      */
-    private void imprimirMinuta(Map<String, Object> parametrosRelatorio, int id_minuta) {        
+    private void imprimirMinuta(Map<String, Object> parametrosRelatorio, int id_minuta) {
 
         if (this.conex.connect()) {
             try {                                                 //\\SoftPan\\ireport\\doc-minuta.jasper
                 JasperPrint print = JasperFillManager.fillReport("\\SoftPan\\ireport\\doc-minuta.jasper", parametrosRelatorio, this.conex.getConnection());
                 JasperViewer jv = new JasperViewer(print, false);
-                jv.setVisible(true);                
-                jv.setTitle("Visualização da Minuta "+id_minuta);
+                jv.setVisible(true);
+                jv.setTitle("Visualização da Minuta " + id_minuta);
                 jv.requestFocus();
                 //JasperViewer.viewReport(print, false);
             } catch (Exception e) {
@@ -1787,7 +1799,7 @@ public class FormMinuta extends javax.swing.JFrame {
 
             }
         }
-        
+
     }
 
     /**
@@ -1878,11 +1890,11 @@ public class FormMinuta extends javax.swing.JFrame {
     private void preencherTabela(DefaultTableModel modelo, String sql) {
         if (sql == null) {
             sql = "SELECT M.ID_MINUTA, R.NOME, D.NOME, N.NF "
-                + "FROM MINUTA M, NOTA_FISCAL N, REMETENTE R, DESTINATARIO D "
-                + "WHERE M.ID_NF = N.ID_NF AND "
-                + "M.ID_REMETENTE = R.ID_REMETENTE AND "
-                + "M.ID_DESTINATARIO = D.ID_DESTINATARIO "
-                + "ORDER BY 1 DESC";
+                    + "FROM MINUTA M, NOTA_FISCAL N, REMETENTE R, DESTINATARIO D "
+                    + "WHERE M.ID_NF = N.ID_NF AND "
+                    + "M.ID_REMETENTE = R.ID_REMETENTE AND "
+                    + "M.ID_DESTINATARIO = D.ID_DESTINATARIO "
+                    + "ORDER BY 1 DESC";
         }
 
         this.conex.connect();
@@ -2018,11 +2030,12 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JMenu menuConsulta;
     private javax.swing.JMenu menuSair;
     private javax.swing.JMenuItem popEditar;
+    private javax.swing.JMenuItem popRemover;
     private javax.swing.JPopupMenu popUpConsultar;
     private javax.swing.JPopupMenu popUpPesquisar;
     private javax.swing.JMenuItem popVisualizar;
     private javax.swing.JRadioButton radioDestinatario;
-    private javax.swing.JRadioButton radioDestino;
+    private javax.swing.JRadioButton radioNF;
     private javax.swing.JRadioButton radioNumero;
     private javax.swing.JRadioButton radioRemetente;
     private javax.swing.JMenuItem subCadastrarDestinatarios;

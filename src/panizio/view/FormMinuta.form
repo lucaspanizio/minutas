@@ -332,7 +332,7 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="radioDestinatario" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="radioDestino" min="-2" max="-2" attributes="0"/>
+                              <Component id="radioNF" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="102" attributes="0">
                               <Component id="txtPesquisa1" min="-2" pref="320" max="-2" attributes="0"/>
@@ -359,7 +359,7 @@
                           <Component id="radioDestinatario" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="radioRemetente" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="radioNumero" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="radioDestino" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="radioNF" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
@@ -372,7 +372,7 @@
             </DimensionLayout>
           </Layout>
           <SubComponents>
-            <Component class="javax.swing.JRadioButton" name="radioDestino">
+            <Component class="javax.swing.JRadioButton" name="radioNF">
               <Properties>
                 <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                   <ComponentRef name="filtros"/>
@@ -391,9 +391,6 @@
                 <Property name="actionCommand" type="java.lang.String" value="D.NOME"/>
                 <Property name="focusable" type="boolean" value="false"/>
               </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="radioDestinatarioActionPerformed"/>
-              </Events>
             </Component>
             <Component class="javax.swing.JRadioButton" name="radioRemetente">
               <Properties>
@@ -452,6 +449,15 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="popVisualizarActionPerformed"/>
+          </Events>
+        </MenuItem>
+        <MenuItem class="javax.swing.JMenuItem" name="popRemover">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="EXCLUIR"/>
+            <Property name="actionCommand" type="java.lang.String" value="EXCLUIR"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="popRemoverActionPerformed"/>
           </Events>
         </MenuItem>
       </SubComponents>

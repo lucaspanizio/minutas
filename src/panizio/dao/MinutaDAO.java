@@ -46,11 +46,11 @@ public class MinutaDAO {
         return false;
     }
 
-    public Minuta obterMinuta(int id_minuta) {
+    public Minuta obter(int id_minuta) {
         this.conex.connect();
-        String sql = "SELECT * FROM MINUTA WHERE ID_MINUTA = " + id_minuta;
-
+       
         try {
+            String sql = "SELECT * FROM MINUTA WHERE ID_MINUTA = " + id_minuta;
             Statement pst = this.conex.c.createStatement();
             ResultSet rs = pst.executeQuery(sql);
 
@@ -71,6 +71,25 @@ public class MinutaDAO {
         }
         return null;
     }
+    
+    public boolean remover(int id_minuta) {
+        this.conex.connect();
+       
+        try {
+            String sql = "DELETE MINUTA WHERE ID_MINUTA = " + id_minuta;
+            Statement pst = this.conex.c.createStatement();
+            
+            return pst.executeUpdate(sql) > 0;
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Erro ao remover minuta: \n" + ex, "ERRO", JOptionPane.ERROR_MESSAGE);
+            ex.printStackTrace();
+        } finally {
+            this.conex.disconnect();
+        }
+        return false ;
+    }
+
 
 //    public boolean alterar(Minuta model){
 //        this.conex.connect();

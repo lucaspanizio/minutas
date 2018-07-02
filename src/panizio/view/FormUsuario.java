@@ -113,7 +113,7 @@ public class FormUsuario extends javax.swing.JFrame {
         cboxSituacao.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "ATIVO", "INATIVO" }));
         cboxSituacao.setEnabled(false);
 
-        cboxPerfil.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PADRAO", "ADMINISTRADOR" }));
+        cboxPerfil.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "PADRAO", "ADMINISTRADOR", "AVANCADO" }));
         cboxPerfil.setEnabled(false);
 
         lblPerfil.setText("Perfil");
