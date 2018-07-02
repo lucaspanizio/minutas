@@ -24,15 +24,15 @@ public class UsuarioDAO {
 
     public void inserir(Usuario model) {
         this.conex.connect();
-        String sql = "INSERT INTO USUARIO VALUES(SEQ_USUARIO.NEXTVAL, ?, ?, ?, ?, ?)";
-
+        
         try {
+            String sql = "INSERT INTO USUARIO VALUES(SEQ_USUARIO.NEXTVAL, ?, ?, ?, ?, ?)";
             PreparedStatement pst = this.conex.c.prepareStatement(sql);
             pst.setString(1, model.getLogin());
             pst.setString(2, model.getSenha());
             pst.setString(3, model.getNome());
             pst.setString(4, model.getPerfil());
-            pst.setString(5, model.getStatus());
+            pst.setString(5, model.getSituacao());
 
             if (pst.executeUpdate() > 0) {//SE O NÚMERO DE LINHAS AFETAS FOI MAIOR QUE 0, SIGNIFICA QUE FOI INSERIDO
                 JOptionPane.showMessageDialog(null, "Usuário " + model.getLogin() + " inserido com sucesso!", "INFORMAÇÃO", JOptionPane.INFORMATION_MESSAGE);
@@ -46,15 +46,15 @@ public class UsuarioDAO {
 
     public void alterar(Usuario model) {
         this.conex.connect();
-        String sql = "UPDATE USUARIO SET LOGIN = ?, SENHA = ?, NOME = ?, PERFIL = ?, SITUACAO = ? WHERE ID_USUARIO = ?";
-
+        
         try {
+            String sql = "UPDATE USUARIO SET LOGIN = ?, SENHA = ?, NOME = ?, PERFIL = ?, SITUACAO = ? WHERE ID_USUARIO = ?";
             PreparedStatement pst = this.conex.c.prepareStatement(sql);
             pst.setString(1, model.getLogin());
             pst.setString(2, model.getSenha());
             pst.setString(3, model.getNome());
             pst.setString(4, model.getPerfil());
-            pst.setString(5, model.getStatus());
+            pst.setString(5, model.getSituacao());
             pst.setInt(6, model.getId());
 
             if (pst.executeUpdate() > 0) {//SE O NÚMERO DE LINHAS AFETAS FOI MAIOR QUE 0, SIGNIFICA QUE FOI INSERIDO
@@ -65,14 +65,6 @@ public class UsuarioDAO {
         } finally {
             this.conex.disconnect();
         }
-    }
-    
-    public void commit() throws SQLException {
-        this.conex.c.commit();
-    }
-    
-    public void rollback() throws SQLException {
-        this.conex.c.rollback();
     }
 
     public List<Usuario> listarUsuarios() {
@@ -102,6 +94,29 @@ public class UsuarioDAO {
             return null;
         }
 
+    }
+    
+    public Usuario obterUsuario(int id_usuario) {
+        this.conex.connect();
+
+        try {
+            String sql = "SELECT ID_USUARIO,NOME,PERFIL,SITUACAO,LOGIN,SENHA FROM USUARIO WHERE ID_USUARIO = "+id_usuario;
+            Statement stmt = this.conex.c.createStatement();            
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                return new Usuario(
+                        rs.getString("nome"),
+                        rs.getString("perfil"),
+                        rs.getString("situacao"),
+                        rs.getString("login"),
+                        rs.getString("senha"));
+            }
+            
+        } catch (SQLException e) {
+            e.printStackTrace();            
+        }
+        return null;
     }
 
 }

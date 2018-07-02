@@ -22,7 +22,7 @@ public class ConexaoBanco {
     private final String pass;    
     
     public ConexaoBanco() {
-        this.url = "jdbc:oracle:thin:@localhost:1521:xe";
+        this.url = "jdbc:oracle:thin:@192.168.15.30:1521:xe";
         this.user = "hr";
         this.pass = "hr";        
     }

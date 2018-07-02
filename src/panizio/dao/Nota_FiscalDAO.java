@@ -7,6 +7,7 @@ import panizio.utils.AtributosGlobais;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.JOptionPane;
 
 /**
@@ -22,7 +23,7 @@ public class Nota_FiscalDAO {
     }
 
     public boolean inserir(Nota_Fiscal model) {
-        AtributosGlobais.ID_NF = obterNotaFiscal();
+        AtributosGlobais.ID_NF = ultimaNotaFiscal();
         
         this.conex.connect();        
         String sql = "INSERT INTO NOTA_FISCAL VALUES(SEQ_NF.NEXTVAL, ?, ?, ?, ?, ?)";
@@ -33,9 +34,7 @@ public class Nota_FiscalDAO {
             pst.setString(2, model.getMetCubicos());
             pst.setString(3, model.getPeso());            
             pst.setString(4, model.getValor());
-            pst.setString(5, model.getNf());
-            
-            
+            pst.setString(5, model.getNf());           
             
             return pst.executeUpdate() > 0;
             
@@ -47,7 +46,7 @@ public class Nota_FiscalDAO {
         return false;
     }
     
-    private int obterNotaFiscal(){     
+    private int ultimaNotaFiscal(){     
         this.conex.connect(); 
         String sql = "SELECT MAX(ID_NF) FROM NOTA_FISCAL";
 
@@ -63,6 +62,27 @@ public class Nota_FiscalDAO {
            this.conex.disconnect();
         }
         return -1;
+    }
+    
+    public Nota_Fiscal obterNotaFiscal(int id_minuta){     
+        this.conex.connect(); 
+        String sql = "SELECT * FROM NOTA_FISCAL WHERE ID_NF = "+id_minuta;
+
+        try {
+            Statement pst = this.conex.c.createStatement(); 
+            ResultSet rs = pst.executeQuery(sql);
+            
+            while(rs.next()){
+                return new Nota_Fiscal(rs.getInt("qtd_volumes"),rs.getString("met_cubicos"),
+                     rs.getString("peso"),rs.getString("valor_nf"),rs.getString("nf"));
+            }
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } finally{
+           this.conex.disconnect();
+        }
+        return null;
     }
     
 //    public void alterar(Nota_Fiscal model){

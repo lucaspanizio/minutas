@@ -9,31 +9,29 @@ public class Usuario {
     private int id;
     private String nome;
     private String perfil;
-    private String status;
+    private String situacao;
     private String login;
     private String senha;
 
     
 
-    public Usuario(String nome, String perfil, String status, String login, String senha) {
+    public Usuario(String nome, String perfil, String situacao, String login, String senha) {
         this.nome = nome;
         this.perfil = perfil;
-        this.status = status;
+        this.situacao = situacao;
         this.login = login;
         this.senha = senha;
     }
     
-    public Usuario(int id, String login, String perfil) {
-        this.id = id;
-        this.login = login;
-        this.perfil = perfil;        
-    }
-    
+//    public Usuario(int id, String login, String perfil) {
+//        this.id = id;
+//        this.login = login;
+//        this.perfil = perfil;        
+//    }
+//    
     public Usuario(int id, String nome, String perfil, String status, String login, String senha) {
-        this(id,login,perfil);
-        this.nome = nome;
-        this.status = status;
-        this.senha = senha;
+        this(nome, perfil, status, login, senha);
+        this.id = id;        
     }
 
     public Usuario() { }
@@ -44,8 +42,8 @@ public class Usuario {
     public String getPerfil() { return perfil; }
     public void setPerfil(String perfil) { this.perfil = perfil; }
 
-    public String getStatus() { return status; }
-    public void setStatus(String status) { this.status = status; }   
+    public String getSituacao() { return situacao; }
+    public void setSituacao(String situacao) { this.situacao = situacao; }   
     
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }    

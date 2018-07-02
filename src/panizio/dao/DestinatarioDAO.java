@@ -73,7 +73,7 @@ public class DestinatarioDAO {
     }
     
     
-    public Destinatario getDestinatario(int id){
+    public Destinatario obterDestinatario(int id){
         this.conex.connect();
         String sql = "SELECT ENDERECO, NUMERO, NOME, CNPJ, CIDADE, ESTADO, TELEFONE, CEP "
                    + "FROM DESTINATARIO WHERE ID_DESTINATARIO = ?";                   

@@ -24,16 +24,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
-import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.view.JasperViewer;
-import panizio.ireport.Relatorios;
+import panizio.dao.UsuarioDAO;
+import panizio.model.Usuario;
 
 /**
  *
@@ -46,7 +44,7 @@ public class FormMinuta extends javax.swing.JFrame {
     public FormMinuta() {
         initComponents();
         this.setLocationRelativeTo(null);
-        this.conex = new ConexaoBanco();
+        this.conex = new ConexaoBanco();        
     }
 
     /**
@@ -86,12 +84,9 @@ public class FormMinuta extends javax.swing.JFrame {
         radioDestinatario = new javax.swing.JRadioButton();
         radioRemetente = new javax.swing.JRadioButton();
         radioNumero = new javax.swing.JRadioButton();
-        radioNF = new javax.swing.JRadioButton();
         jLabel1 = new javax.swing.JLabel();
         txtPesquisa1 = new javax.swing.JTextField();
-        btnCancelar1 = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        btnInfo1 = new javax.swing.JButton();
+        btnPesquisar = new javax.swing.JButton();
         popUpConsultar = new javax.swing.JPopupMenu();
         popVisualizar = new javax.swing.JMenuItem();
         filtros = new javax.swing.ButtonGroup();
@@ -183,13 +178,14 @@ public class FormMinuta extends javax.swing.JFrame {
         subConsultarDestinatarios = new javax.swing.JMenuItem();
         menuSair = new javax.swing.JMenu();
 
-        formEditarCadastrar.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        formEditarCadastrar.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         formEditarCadastrar.setMinimumSize(new java.awt.Dimension(520, 323));
         formEditarCadastrar.setModal(true);
         formEditarCadastrar.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         btnSalvar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/check 22x22.png"))); // NOI18N
         btnSalvar1.setText("SALVAR");
+        btnSalvar1.setFocusable(false);
         btnSalvar1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnSalvar1ActionPerformed(evt);
@@ -200,16 +196,17 @@ public class FormMinuta extends javax.swing.JFrame {
                 btnSalvar1KeyPressed(evt);
             }
         });
-        formEditarCadastrar.getContentPane().add(btnSalvar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 10, 110, -1));
+        formEditarCadastrar.getContentPane().add(btnSalvar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 10, 110, -1));
 
         btnCancelar2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/cancel 22x22 (2).png"))); // NOI18N
         btnCancelar2.setText("CANCELAR");
+        btnCancelar2.setFocusable(false);
         btnCancelar2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelar2ActionPerformed(evt);
             }
         });
-        formEditarCadastrar.getContentPane().add(btnCancelar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 10, 120, -1));
+        formEditarCadastrar.getContentPane().add(btnCancelar2, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 10, 120, -1));
 
         Remetente1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
@@ -244,6 +241,7 @@ public class FormMinuta extends javax.swing.JFrame {
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
+        txtTelefone.setNextFocusableComponent(btnSalvar1);
 
         try {
             txtCNPJ.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##.###.###/####-##")));
@@ -334,15 +332,10 @@ public class FormMinuta extends javax.swing.JFrame {
 
         formEditarCadastrar.getContentPane().add(Remetente1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 60, 480, 210));
 
-        formConsultar.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        formConsultar.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         formConsultar.setTitle("Consultar Minutas");
-        formConsultar.setMinimumSize(new java.awt.Dimension(735, 472));
+        formConsultar.setMinimumSize(new java.awt.Dimension(607, 472));
         formConsultar.setModal(true);
-        formConsultar.addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowActivated(java.awt.event.WindowEvent evt) {
-                formConsultarWindowActivated(evt);
-            }
-        });
         formConsultar.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         tblMinutas.setModel(new javax.swing.table.DefaultTableModel(
@@ -350,7 +343,7 @@ public class FormMinuta extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Número", "Remetente", "Destinatário", "Destino"
+                "Número", "Remetente", "Destinatário", "Nota Fiscal"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -368,29 +361,34 @@ public class FormMinuta extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(tblMinutas);
 
-        formConsultar.getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 700, 280));
+        formConsultar.getContentPane().add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 140, 570, 280));
 
         jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         filtros.add(radioDestino);
-        radioDestino.setText("Destino");
-        radioDestino.setActionCommand("DESTINO");
+        radioDestino.setText("Nota Fiscal");
+        radioDestino.setActionCommand("N.NF");
+        radioDestino.setFocusable(false);
 
         filtros.add(radioDestinatario);
         radioDestinatario.setText("Destinatário");
-        radioDestinatario.setActionCommand("DESTINATARIO");
+        radioDestinatario.setActionCommand("D.NOME");
+        radioDestinatario.setFocusable(false);
+        radioDestinatario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radioDestinatarioActionPerformed(evt);
+            }
+        });
 
         filtros.add(radioRemetente);
         radioRemetente.setText("Rementente");
-        radioRemetente.setActionCommand("REMETENTE");
+        radioRemetente.setActionCommand("R.NOME");
+        radioRemetente.setFocusable(false);
 
         filtros.add(radioNumero);
         radioNumero.setText("Numero");
-        radioNumero.setActionCommand("NUMERO");
-
-        filtros.add(radioNF);
-        radioNF.setText("Nota Fiscal");
-        radioNF.setActionCommand("NOTA_FISCAL");
+        radioNumero.setActionCommand("M.ID_MINUTA");
+        radioNumero.setFocusable(false);
 
         jLabel1.setText("Selecione um filtro para pesquisar:");
 
@@ -400,23 +398,11 @@ public class FormMinuta extends javax.swing.JFrame {
             }
         });
 
-        btnCancelar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/cancel 22x22.png"))); // NOI18N
-        btnCancelar1.setText("CANCELAR");
-        btnCancelar1.addActionListener(new java.awt.event.ActionListener() {
+        btnPesquisar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/zoom 20x20.png"))); // NOI18N
+        btnPesquisar.setText("PESQUISAR");
+        btnPesquisar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelar1ActionPerformed(evt);
-            }
-        });
-
-        jLabel2.setText("Pesquisar");
-
-        btnInfo1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/info 30x30.png"))); // NOI18N
-        btnInfo1.setBorder(null);
-        btnInfo1.setBorderPainted(false);
-        btnInfo1.setContentAreaFilled(false);
-        btnInfo1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnInfo1ActionPerformed(evt);
+                btnPesquisarActionPerformed(evt);
             }
         });
 
@@ -424,60 +410,46 @@ public class FormMinuta extends javax.swing.JFrame {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(46, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(93, 93, 93)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(radioDestino)
-                                .addGap(15, 15, 15)
-                                .addComponent(radioDestinatario)
-                                .addGap(9, 9, 9)
-                                .addComponent(radioRemetente)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(radioNumero)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(radioNF))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 60, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(10, 10, 10)
-                                .addComponent(txtPesquisa1, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btnCancelar1))))
+                        .addComponent(radioNumero)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(radioRemetente)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(radioDestinatario)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(radioDestino))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(226, 226, 226)
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 44, Short.MAX_VALUE)
-                .addComponent(btnInfo1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                        .addComponent(txtPesquisa1, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnPesquisar)))
+                .addGap(73, 73, 73))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(139, 139, 139)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(57, 57, 57))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(radioDestino)
-                            .addComponent(radioDestinatario)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(radioRemetente)
-                                .addComponent(radioNumero)
-                                .addComponent(radioNF))))
-                    .addComponent(btnInfo1, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtPesquisa1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(btnCancelar1)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(radioDestinatario)
+                    .addComponent(radioRemetente)
+                    .addComponent(radioNumero)
+                    .addComponent(radioDestino))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtPesquisa1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnPesquisar))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        formConsultar.getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 700, 120));
+        formConsultar.getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 570, 120));
 
         popVisualizar.setText("VISUALIZAR");
         popVisualizar.addActionListener(new java.awt.event.ActionListener() {
@@ -487,13 +459,16 @@ public class FormMinuta extends javax.swing.JFrame {
         });
         popUpConsultar.add(popVisualizar);
 
-        formPesquisar.setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        formPesquisar.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         formPesquisar.setMinimumSize(new java.awt.Dimension(625, 458));
         formPesquisar.setModal(true);
         formPesquisar.setResizable(false);
         formPesquisar.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         txtPesquisa.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtPesquisaKeyPressed(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtPesquisaKeyTyped(evt);
             }
@@ -507,16 +482,16 @@ public class FormMinuta extends javax.swing.JFrame {
                 btnNovoActionPerformed(evt);
             }
         });
-        formPesquisar.getContentPane().add(btnNovo, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 40, 100, -1));
+        formPesquisar.getContentPane().add(btnNovo, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 40, 100, -1));
 
-        btnCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/cancel 22x22.png"))); // NOI18N
-        btnCancel.setText("CANCELAR");
+        btnCancel.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/erase.png"))); // NOI18N
+        btnCancel.setText("LIMPAR");
         btnCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCancelActionPerformed(evt);
             }
         });
-        formPesquisar.getContentPane().add(btnCancel, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 40, -1, -1));
+        formPesquisar.getContentPane().add(btnCancel, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 40, -1, -1));
 
         lblPesquisar1.setText(" Pesquisar  (Nome):");
         formPesquisar.getContentPane().add(lblPesquisar1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, -1, -1));
@@ -888,6 +863,7 @@ public class FormMinuta extends javax.swing.JFrame {
         txtVolumes.setEnabled(false);
         txtVolumes.setNextFocusableComponent(txtCubico);
 
+        txtEmissao.setEditable(false);
         try {
             txtEmissao.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
         } catch (java.text.ParseException ex) {
@@ -896,6 +872,7 @@ public class FormMinuta extends javax.swing.JFrame {
         txtEmissao.setText("");
         txtEmissao.setEnabled(false);
 
+        txtHora.setEditable(false);
         try {
             txtHora.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##:##")));
         } catch (java.text.ParseException ex) {
@@ -909,18 +886,22 @@ public class FormMinuta extends javax.swing.JFrame {
 
         txtValorMinuta.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("###0.00"))));
         txtValorMinuta.setEnabled(false);
+        txtValorMinuta.setNextFocusableComponent(txtRemetente);
         txtValorMinuta.setPreferredSize(new java.awt.Dimension(14, 24));
 
         txtValorNF.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("###0.00"))));
         txtValorNF.setEnabled(false);
+        txtValorNF.setNextFocusableComponent(txtPeso);
         txtValorNF.setPreferredSize(new java.awt.Dimension(14, 24));
 
         txtPeso.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("###0.00"))));
         txtPeso.setEnabled(false);
+        txtPeso.setNextFocusableComponent(txtVolumes);
         txtPeso.setPreferredSize(new java.awt.Dimension(14, 24));
 
         txtCubico.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("###0.000"))));
         txtCubico.setEnabled(false);
+        txtCubico.setNextFocusableComponent(txtValorMinuta);
         txtCubico.setPreferredSize(new java.awt.Dimension(14, 24));
 
         javax.swing.GroupLayout IdentificaçãoLayout = new javax.swing.GroupLayout(Identificação);
@@ -933,7 +914,7 @@ public class FormMinuta extends javax.swing.JFrame {
                     .addGroup(IdentificaçãoLayout.createSequentialGroup()
                         .addComponent(lblNF)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtNF, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(txtNF))
                     .addGroup(IdentificaçãoLayout.createSequentialGroup()
                         .addGroup(IdentificaçãoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(IdentificaçãoLayout.createSequentialGroup()
@@ -1078,6 +1059,7 @@ public class FormMinuta extends javax.swing.JFrame {
         lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/logo-167x54.png"))); // NOI18N
 
         btnImprimir.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/print 30x30.png"))); // NOI18N
+        btnImprimir.setEnabled(false);
         btnImprimir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnImprimirActionPerformed(evt);
@@ -1121,6 +1103,7 @@ public class FormMinuta extends javax.swing.JFrame {
 
         menuConsulta.setText("Consulta");
 
+        subConsultarMinutas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/minuta 16x16.png"))); // NOI18N
         subConsultarMinutas.setText("Minuta");
         subConsultarMinutas.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mousePressed(java.awt.event.MouseEvent evt) {
@@ -1241,12 +1224,18 @@ public class FormMinuta extends javax.swing.JFrame {
 
 
     private void btnIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIncluirActionPerformed
+        if (!txtNF.getText().isEmpty()) {
+            ManipularCampos.limparCampos(Arrays.asList(txtNF, txtMinuta, txtValorNF, txtValorMinuta, txtPeso, txtVolumes, txtCubico,
+                    txtEmissao, txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtTelefone1, txtCEP1, txtCidade1,
+                    txtEstado1, txtDestinatario, txtCNPJ2, txtEndereco2, txtNumero2, txtTelefone2, txtCEP2, txtCidade2, txtEstado2,
+                    txtObservacao, txtHora));
+        }
         btnIncluir.setEnabled(false);
-        List<Component> camposHabilitar = Arrays.asList(txtNF, txtValorNF, txtValorMinuta, txtPeso, txtVolumes, txtCubico,
-                txtEmissao, txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtTelefone1, txtCEP1,
+
+        ManipularCampos.habilitar_desabilitar(Arrays.asList(txtNF, txtValorNF, txtValorMinuta, txtPeso, txtVolumes,
+                txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtTelefone1, txtCEP1, txtCubico,
                 txtCidade1, txtEstado1, txtDestinatario, txtCNPJ2, txtEndereco2, txtNumero2, txtTelefone2, txtCEP2,
-                txtCidade2, txtEstado2, txtObservacao, btnCancelar, txtHora, btnSalvar, btnRemetente, btnDestinatario);
-        ManipularCampos.habilitar_desabilitar(camposHabilitar, true);
+                txtCidade2, txtEstado2, txtObservacao, btnCancelar, btnSalvar, btnRemetente, btnDestinatario), true);
 
         formatarCamposMinuta();
 
@@ -1254,6 +1243,7 @@ public class FormMinuta extends javax.swing.JFrame {
         txtEmissao.setText(java.text.DateFormat.getDateInstance(DateFormat.SHORT).format(new Date()));
         txtHora.setText(new SimpleDateFormat("kk:mm").format(new Date()));
         txtMinuta.setText(String.valueOf(AtributosGlobais.minutaAtual));
+
     }//GEN-LAST:event_btnIncluirActionPerformed
 
     /**
@@ -1302,15 +1292,20 @@ public class FormMinuta extends javax.swing.JFrame {
                     txtPeso.getText(), txtValorNF.getText(), txtNF.getText());
             if (new Nota_FiscalDAO().inserir(nf)) {
 
-                Minuta min = new Minuta(txtEmissao.getText() + txtHora.getText(), txtValorNF.getText(), AtributosGlobais.usuario.getId(), AtributosGlobais.ID_DESTINATARIO,
+                Minuta min = new Minuta(txtEmissao.getText() + txtHora.getText(),txtValorNF.getText(), AtributosGlobais.usuario.getId(), AtributosGlobais.ID_DESTINATARIO,
                         AtributosGlobais.ID_REMETENTE, txtObservacao.getText(), AtributosGlobais.ID_NF);
+                min.setId(Integer.parseInt(txtMinuta.getText()));
 
                 if (new MinutaDAO().inserir(min)) {
-                    btnCancelarActionPerformed(evt);
                     btnImprimir.setEnabled(true);
+                    btnIncluir.setEnabled(true);
+                    ManipularCampos.habilitar_desabilitar(Arrays.asList(txtNF, txtValorNF, txtValorMinuta, txtPeso, txtVolumes,
+                            txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtTelefone1, txtCEP1, txtCubico,
+                            txtCidade1, txtEstado1, txtDestinatario, txtCNPJ2, txtEndereco2, txtNumero2, txtTelefone2, txtCEP2,
+                            txtCidade2, txtEstado2, txtObservacao, btnCancelar, btnSalvar, btnRemetente, btnDestinatario), false);
+                    AtributosGlobais.minutaAtual = Integer.parseInt(txtMinuta.getText());
                 }
             }
-            ManipularCampos.formatarCamposDefault(Arrays.asList(txtNF, txtVolumes, txtNumero));
         } //Um ou mais campos obrigatórios não foram preenchidos
         else {
             JOptionPane.showMessageDialog(null, "Verifique se os campos foram preenchidos corretamente.", "ATENÇÃO!", JOptionPane.WARNING_MESSAGE);
@@ -1389,10 +1384,6 @@ public class FormMinuta extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtDestinatarioKeyPressed
 
-    private void formConsultarWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formConsultarWindowActivated
-        preencherTabela((DefaultTableModel) tblMinutas.getModel(), null);
-    }//GEN-LAST:event_formConsultarWindowActivated
-
     /**
      * Botão SALVAR do formCadastrar (Remetentes ou Destinatários)
      *
@@ -1456,8 +1447,10 @@ public class FormMinuta extends javax.swing.JFrame {
      */
     private void btnCancelar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar2ActionPerformed
         List<Component> camposLimpar = Arrays.asList(txtNome, txtEndereco, txtCidade, txtEstado, txtNumero, txtTelefone, txtCEP, txtCNPJ);
-        ManipularCampos.limparCampos(camposLimpar);
-        formEditarCadastrar.dispose();
+        
+        ManipularCampos.limparCampos(camposLimpar);     
+        formatarCamposPesquisa();    
+        txtNome.requestFocus();
     }//GEN-LAST:event_btnCancelar2ActionPerformed
 
     /**
@@ -1465,27 +1458,25 @@ public class FormMinuta extends javax.swing.JFrame {
      *
      * @param evt
      */
-    private void btnCancelar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar1ActionPerformed
-        formConsultar.dispose();
-        filtros.clearSelection();
-    }//GEN-LAST:event_btnCancelar1ActionPerformed
+    private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
+        if (!txtPesquisa1.getText().isEmpty()) {
+            if (filtros.getSelection() != null) {
+                Object filtro = filtros.getSelection().getActionCommand();
 
-    /**
-     * Botão exibe informação no meio do formConsulta (Minutas) explicando
-     * algumas funcionalidades.
-     *
-     * @param evt
-     */
-    private void btnInfo1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInfo1ActionPerformed
-        JOptionPane.showMessageDialog(null, "Nesta tela é possível pesquisar minutas digitando no campo de texto, letras" + '\n'
-                + "ou números de acordo com o filtro selecionado." + '\n'
-                + "A tabela se atualiza automaticamente a medida em que novos caracteres são" + '\n'
-                + "digitados." + '\n' + '\n'
-                + "Para fechar a janela basta clicar no botão CANCELAR." + '\n' + '\n'
-                + "Para visualizar ou imprimir a minuta encontrada deve-se clicar com o botão " + '\n'
-                + "direito do mouse sobre a linha na tabela e clicar no pop up VISUALIZAR," + '\n'
-                + "para que o PDF seja exibido.", "Informação", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_btnInfo1ActionPerformed
+                if (filtros.getSelection() == radioNumero) {
+                    filtro = Integer.parseInt(filtros.getSelection().getActionCommand());
+                }                
+                
+                String sql = "SELECT M.ID_MINUTA, R.NOME, D.NOME, N.NF "
+                           + "FROM MINUTA M, REMETENTE R, DESTINATARIO D, NOTA_FISCAL N "
+                           + "WHERE M.ID_NF = N.ID_NF AND M.ID_REMETENTE = R.ID_REMETENTE AND "
+                           + "M.ID_DESTINATARIO = D.ID_DESTINATARIO AND " + filtro + " LIKE '" 
+                           + txtPesquisa1.getText().toUpperCase() + "%' ORDER BY 1 DESC";
+
+                preencherTabela((DefaultTableModel) tblMinutas.getModel(), sql);
+            }
+        }
+    }//GEN-LAST:event_btnPesquisarActionPerformed
 
     /**
      * Botão NOVO no formCadastrar
@@ -1495,6 +1486,7 @@ public class FormMinuta extends javax.swing.JFrame {
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
         formatarCamposPesquisa();
         TransicaoTelas.abrirComTitulo(formEditarCadastrar, "Cadastrar " + AtributosGlobais.tabela);
+        txtNome.requestFocus();
     }//GEN-LAST:event_btnNovoActionPerformed
 
     /**
@@ -1503,11 +1495,60 @@ public class FormMinuta extends javax.swing.JFrame {
      * @param evt
      */
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        formPesquisar.dispose();
+        preencherTabela((DefaultTableModel) tblRemetenteOuDestinatario.getModel());
+        txtPesquisa.setText(null);
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void popVisualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_popVisualizarActionPerformed
-        // TODO add your handling code here:
+        int id_minuta = (int) tblMinutas.getValueAt(tblMinutas.getSelectedRow(), 0);
+        
+        Minuta minuta = new MinutaDAO().obterMinuta(id_minuta);
+        Remetente remetente = new RemetenteDAO().obterRemetente(minuta.getId_remetente());
+        Destinatario destinatario = new DestinatarioDAO().obterDestinatario(minuta.getId_destinatario());
+        Nota_Fiscal nf = new Nota_FiscalDAO().obterNotaFiscal(minuta.getId_nf());
+        Usuario usuario = new UsuarioDAO().obterUsuario(minuta.getId_usuario());
+        
+        Map<String, Object> parametrosRelatorio = new HashMap<>();
+        //PRIMEIRO PAINEL - DADOS NOTA E MINUTA
+        //variavel ireport, campo java
+        parametrosRelatorio.put("notas", nf.getNf());
+        parametrosRelatorio.put("nf_valor", nf.getValor());
+        parametrosRelatorio.put("peso", nf.getPeso());
+        parametrosRelatorio.put("vol", nf.getQtdVolumes());
+        
+        parametrosRelatorio.put("cub", nf.getMetCubicos());
+        parametrosRelatorio.put("nome_usuario", usuario.getLogin());
+        parametrosRelatorio.put("id_minuta", minuta.getId());
+        System.out.println(minuta.getId());
+        parametrosRelatorio.put("emissao", minuta.getEmissao());
+        System.out.println(minuta.getEmissao());
+        parametrosRelatorio.put("minuta_valor", minuta.getValor());
+
+        //SEGUNDO PAINEL - DADOS DO REMETENTE
+        parametrosRelatorio.put("rem_razao", remetente.getNome());
+        parametrosRelatorio.put("rem_endereco", remetente.getEndereco());
+        parametrosRelatorio.put("rem_cep", remetente.getCep());
+        parametrosRelatorio.put("rem_telefone", remetente.getTelefone().isEmpty() ? " " : remetente.getTelefone());
+        parametrosRelatorio.put("rem_cnpj", remetente.getCnpj());
+        parametrosRelatorio.put("rem_cidade", remetente.getCidade());
+        parametrosRelatorio.put("rem_estado", remetente.getEstado());
+        parametrosRelatorio.put("rem_numero", remetente.getNumero());
+
+        //TERCEIRO PAINEL - DADOS DO DESTINATARIO
+        parametrosRelatorio.put("dest_razao", destinatario.getNome());
+        parametrosRelatorio.put("dest_endereco", destinatario.getEndereco());
+        parametrosRelatorio.put("dest_cep", destinatario.getCep());
+        parametrosRelatorio.put("dest_telefone", destinatario.getTelefone().isEmpty() ? " " : destinatario.getTelefone());
+        parametrosRelatorio.put("dest_cnpj", destinatario.getCnpj());
+        parametrosRelatorio.put("dest_cidade", destinatario.getCidade());
+        parametrosRelatorio.put("dest_estado", destinatario.getEstado());
+        parametrosRelatorio.put("dest_numero", destinatario.getNumero());
+
+        //QUARTO PAINEL - OBSERVAÇÃO
+        parametrosRelatorio.put("obs", minuta.getObs().isEmpty() ? " " : minuta.getObs());        
+        
+        formConsultar.dispose();
+        imprimirMinuta(parametrosRelatorio, (int) parametrosRelatorio.get("id_minuta"));
     }//GEN-LAST:event_popVisualizarActionPerformed
 
     /**
@@ -1594,7 +1635,7 @@ public class FormMinuta extends javax.swing.JFrame {
     private void popEditarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_popEditarMousePressed
         if (formPesquisar.getTitle().equals("Consultar Remetente")) {
             AtributosGlobais.ID_REMETENTE = (int) tblRemetenteOuDestinatario.getValueAt(tblRemetenteOuDestinatario.getSelectedRow(), 0);
-            Remetente rem = new RemetenteDAO().getRemetente(AtributosGlobais.ID_REMETENTE);
+            Remetente rem = new RemetenteDAO().obterRemetente(AtributosGlobais.ID_REMETENTE);
             txtEndereco.setText(rem.getEndereco());
             txtNumero.setText(String.valueOf(rem.getNumero()));
             txtNome.setText(rem.getNome());
@@ -1605,7 +1646,7 @@ public class FormMinuta extends javax.swing.JFrame {
             txtCEP.setText(rem.getCep());
         } else if (formPesquisar.getTitle().equals("Consultar Destinatario")) {
             AtributosGlobais.ID_DESTINATARIO = (int) tblRemetenteOuDestinatario.getValueAt(tblRemetenteOuDestinatario.getSelectedRow(), 0);
-            Destinatario dest = new DestinatarioDAO().getDestinatario(AtributosGlobais.ID_DESTINATARIO);
+            Destinatario dest = new DestinatarioDAO().obterDestinatario(AtributosGlobais.ID_DESTINATARIO);
             txtEndereco.setText(dest.getEndereco());
             txtNumero.setText(String.valueOf(dest.getNumero()));
             txtNome.setText(dest.getNome());
@@ -1647,21 +1688,13 @@ public class FormMinuta extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPesquisaKeyTyped
 
     private void txtPesquisa1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisa1KeyPressed
-        if (!txtPesquisa1.getText().isEmpty()) {
-            if (filtros.getSelection() != null) {
-                String filtro = filtros.getSelection().getActionCommand();
-                System.out.println(filtro);
-
-                String sql = "SELECT ID_MINUTA, R.NOME, D.NOME, D.CIDADE, DATA_EMISSAO FROM MINUTA M, "
-                        + "REMETENTE R, DESTINATARIO D WHERE M.ID_REMETENTE = R.ID_REMETENTE AND "
-                        + "M.ID_DESTINATARIO = D.ID_DESTINATARIO AND " + filtro + " LIKE '" + txtPesquisa1.getText().toUpperCase() + "%' ORDER BY 1 DESC";
-                preencherTabela((DefaultTableModel) tblMinutas.getModel(), sql);
-            } else {
-                List<Integer> teclasPermitidas = Arrays.asList(KeyEvent.VK_DELETE, KeyEvent.VK_BACK_SPACE, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT);
-                if (!teclasPermitidas.contains(evt.getKeyCode())) {
-                    JOptionPane.showMessageDialog(null, "Selecione um filtro! ", "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
-                }
+        if (!txtPesquisa1.getText().isEmpty() && filtros.getSelection() == null) {
+            List<Integer> teclasPermitidas = Arrays.asList(KeyEvent.VK_DELETE, KeyEvent.VK_BACK_SPACE, KeyEvent.VK_LEFT, KeyEvent.VK_RIGHT);
+            if (!teclasPermitidas.contains(evt.getKeyCode())) {
+                JOptionPane.showMessageDialog(null, "Selecione um filtro! ", "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
             }
+        } else if (txtPesquisa1.getText().length() == 1) {
+            preencherTabela((DefaultTableModel) tblMinutas.getModel(), null);
         }
     }//GEN-LAST:event_txtPesquisa1KeyPressed
 
@@ -1670,6 +1703,7 @@ public class FormMinuta extends javax.swing.JFrame {
     }//GEN-LAST:event_btnSalvar1KeyPressed
 
     private void subConsultarMinutasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_subConsultarMinutasMousePressed
+        preencherTabela((DefaultTableModel) tblMinutas.getModel(), null);
         TransicaoTelas.abrir(formConsultar);
     }//GEN-LAST:event_subConsultarMinutasMousePressed
 
@@ -1682,26 +1716,19 @@ public class FormMinuta extends javax.swing.JFrame {
     }//GEN-LAST:event_sucConsultarRemetentesActionPerformed
 
     private void btnImprimirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirActionPerformed
-        imprimirMinuta();
-    }//GEN-LAST:event_btnImprimirActionPerformed
-    
-    /**
-     * Imprime a minuta atual, recém feita ainda em cache.
-     */
-    private void imprimirMinuta(){
-        Map<String,Object> parametrosRelatorio = new HashMap<>();
+        Map<String, Object> parametrosRelatorio = new HashMap<>();
         //PRIMEIRO PAINEL - DADOS NOTA E MINUTA
-     //variavel ireport, campo java
+        //variavel ireport, campo java
         parametrosRelatorio.put("notas", txtNF.getText());
-        parametrosRelatorio.put("nf_valor", txtValorNF.getText());        
+        parametrosRelatorio.put("nf_valor", txtValorNF.getText());
         parametrosRelatorio.put("peso", txtPeso.getText());
-        parametrosRelatorio.put("volumes", txtVolumes.getText());        
-        parametrosRelatorio.put("cub", txtCubico.getText());        
+        parametrosRelatorio.put("vol", Integer.parseInt( txtVolumes.getText() ));
+        parametrosRelatorio.put("cub", txtCubico.getText());
         parametrosRelatorio.put("nome_usuario", txtUsuario.getText());
-        parametrosRelatorio.put("id_minuta", txtMinuta.getText());        
-        parametrosRelatorio.put("emissao", txtEmissao.getText()+"  "+txtHora.getText());        
+        parametrosRelatorio.put("id_minuta", Integer.parseInt( txtMinuta.getText() ));        
+        parametrosRelatorio.put("emissao", txtEmissao.getText() + " " + txtHora.getText());
         parametrosRelatorio.put("minuta_valor", txtValorMinuta.getText());
-        
+
         //SEGUNDO PAINEL - DADOS DO REMETENTE
         parametrosRelatorio.put("rem_razao", txtRemetente.getText());
         parametrosRelatorio.put("rem_endereco", txtEndereco1.getText());
@@ -1711,7 +1738,7 @@ public class FormMinuta extends javax.swing.JFrame {
         parametrosRelatorio.put("rem_cidade", txtCidade1.getText());
         parametrosRelatorio.put("rem_estado", txtEstado1.getText());
         parametrosRelatorio.put("rem_numero", txtNumero1.getText());
-        
+
         //TERCEIRO PAINEL - DADOS DO DESTINATARIO
         parametrosRelatorio.put("dest_razao", txtDestinatario.getText());
         parametrosRelatorio.put("dest_endereco", txtEndereco2.getText());
@@ -1721,31 +1748,48 @@ public class FormMinuta extends javax.swing.JFrame {
         parametrosRelatorio.put("dest_cidade", txtCidade2.getText());
         parametrosRelatorio.put("dest_estado", txtEstado2.getText());
         parametrosRelatorio.put("dest_numero", txtNumero2.getText());
-        
+
         //QUARTO PAINEL - OBSERVAÇÃO
         parametrosRelatorio.put("obs", txtObservacao.getText().isEmpty() ? " " : txtObservacao.getText());
         
-        if(this.conex.connect()){
-            try {
-                JasperPrint print = JasperFillManager.fillReport("C:\\SofPan\\Relatorios\\doc-minuta.jasper", parametrosRelatorio, this.conex.getConnection());
-                JasperViewer.viewReport(print,false);                
+        imprimirMinuta(parametrosRelatorio, Integer.parseInt( txtMinuta.getText() ));
+    }//GEN-LAST:event_btnImprimirActionPerformed
+
+    private void txtPesquisaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisaKeyPressed
+        //ATALHO PARA CADASTRO DE REMTENTES OU DESTINATARIOS NA TELA DE PESQUISA
+        if (evt.getKeyCode() == KeyEvent.VK_F4) {
+            formatarCamposPesquisa();
+            TransicaoTelas.abrirComTitulo(formEditarCadastrar, "Cadastrar " + AtributosGlobais.tabela);
+        }
+    }//GEN-LAST:event_txtPesquisaKeyPressed
+
+    private void radioDestinatarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioDestinatarioActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_radioDestinatarioActionPerformed
+
+    /**
+     * Imprime a minuta atual, recém feita ainda em cache.
+     */
+    private void imprimirMinuta(Map<String, Object> parametrosRelatorio, int id_minuta) {        
+
+        if (this.conex.connect()) {
+            try {                                                 //\\SoftPan\\ireport\\doc-minuta.jasper
+                JasperPrint print = JasperFillManager.fillReport("\\SoftPan\\ireport\\doc-minuta.jasper", parametrosRelatorio, this.conex.getConnection());
+                JasperViewer jv = new JasperViewer(print, false);
+                jv.setVisible(true);                
+                jv.setTitle("Visualização da Minuta "+id_minuta);
+                jv.requestFocus();
+                //JasperViewer.viewReport(print, false);
             } catch (Exception e) {
                 e.printStackTrace();
                 System.out.println(e);
                 JOptionPane.showMessageDialog(null, "Não foi possível apresentar o documento.", "ERRO", JOptionPane.ERROR_MESSAGE);
-                
-            }           
-        }        
+
+            }
+        }
         
-//        try {
-//            JasperPrint print = JasperFillManager.fillReport("DOC-MINUTA.jasper", parametrosRelatorio, this.conex.getConnection());
-//            JasperViewer.viewReport(print,false);
-//        } catch (JRException ex) {
-//            Logger.getLogger(FormMinuta.class.getName()).log(Level.SEVERE, null, ex);
-//        }
     }
-    
-    
+
     /**
      * Consulta no banco de dados determinado remetente ou destinatário pela id
      * e seta nos respectivos campos do FormMinuta.
@@ -1833,9 +1877,12 @@ public class FormMinuta extends javax.swing.JFrame {
      */
     private void preencherTabela(DefaultTableModel modelo, String sql) {
         if (sql == null) {
-            sql = "SELECT ID_MINUTA, R.NOME, D.NOME, D.CIDADE, DATA_EMISSAO FROM MINUTA M, "
-                    + "REMETENTE R, DESTINATARIO D WHERE M.ID_REMETENTE = R.ID_REMETENTE AND "
-                    + "M.ID_DESTINATARIO = D.ID_DESTINATARIO ORDER BY 1 DESC";
+            sql = "SELECT M.ID_MINUTA, R.NOME, D.NOME, N.NF "
+                + "FROM MINUTA M, NOTA_FISCAL N, REMETENTE R, DESTINATARIO D "
+                + "WHERE M.ID_NF = N.ID_NF AND "
+                + "M.ID_REMETENTE = R.ID_REMETENTE AND "
+                + "M.ID_DESTINATARIO = D.ID_DESTINATARIO "
+                + "ORDER BY 1 DESC";
         }
 
         this.conex.connect();
@@ -1849,7 +1896,7 @@ public class FormMinuta extends javax.swing.JFrame {
                 model.removeRow(0);
             }
             while (rs.next()) {
-                model.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getString(5)});
+                model.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)});
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -1909,13 +1956,12 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JPanel Remetente1;
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnCancelar1;
     private javax.swing.JButton btnCancelar2;
     private javax.swing.JButton btnDestinatario;
     private javax.swing.JButton btnImprimir;
     private javax.swing.JButton btnIncluir;
-    private javax.swing.JButton btnInfo1;
     private javax.swing.JButton btnNovo;
+    private javax.swing.JButton btnPesquisar;
     private javax.swing.JButton btnRemetente;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSalvar1;
@@ -1924,7 +1970,6 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JDialog formEditarCadastrar;
     private javax.swing.JDialog formPesquisar;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuBar jMenu;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
@@ -1978,7 +2023,6 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JMenuItem popVisualizar;
     private javax.swing.JRadioButton radioDestinatario;
     private javax.swing.JRadioButton radioDestino;
-    private javax.swing.JRadioButton radioNF;
     private javax.swing.JRadioButton radioNumero;
     private javax.swing.JRadioButton radioRemetente;
     private javax.swing.JMenuItem subCadastrarDestinatarios;

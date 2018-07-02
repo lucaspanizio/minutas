@@ -73,7 +73,7 @@ public class RemetenteDAO {
     }
    
     
-    public Remetente getRemetente(int id){
+    public Remetente obterRemetente(int id){
         this.conex.connect();
         String sql = "SELECT ENDERECO, NUMERO, NOME, CNPJ, CIDADE, ESTADO, TELEFONE, CEP "
                    + "FROM REMETENTE WHERE ID_REMETENTE = ?";                         

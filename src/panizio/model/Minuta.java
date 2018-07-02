@@ -22,7 +22,7 @@ public class Minuta {
         this.id_usuario = id_usuario;
         this.id_destinatario = id_destinatario;
         this.id_remetente = id_remetente;
-        this.obs = obs.toUpperCase();
+        this.obs = obs == null ? "" : obs.toUpperCase();
     }
 
     public int getId_nf() { return id_nf;  }
