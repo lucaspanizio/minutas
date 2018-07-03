@@ -78,10 +78,10 @@ public class ConexaoBanco {
             st = this.c.createStatement();
             rs = st.executeQuery(query);
             return rs;
+            
         } catch ( SQLException e ) {
             e.printStackTrace();
-        }
-       
+        } 
         return null;
     }
    
