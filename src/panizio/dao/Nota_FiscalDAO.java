@@ -64,11 +64,12 @@ public class Nota_FiscalDAO {
         return -1;
     }
     
-    public Nota_Fiscal obterNotaFiscal(int id_minuta){     
+    public Nota_Fiscal obter(int id_minuta){     
         this.conex.connect(); 
-        String sql = "SELECT * FROM NOTA_FISCAL WHERE ID_NF = "+id_minuta;
-
+        
         try {
+            String sql = "SELECT * FROM NOTA_FISCAL WHERE ID_NF = "+id_minuta;
+            
             Statement pst = this.conex.c.createStatement(); 
             ResultSet rs = pst.executeQuery(sql);
             

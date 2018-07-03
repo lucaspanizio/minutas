@@ -96,7 +96,7 @@ public class UsuarioDAO {
 
     }
     
-    public Usuario obterUsuario(int id_usuario) {
+    public Usuario obter(int id_usuario) {
         this.conex.connect();
 
         try {

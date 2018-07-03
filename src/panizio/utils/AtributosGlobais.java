@@ -15,6 +15,5 @@ public class AtributosGlobais {
     public static int ID_REMETENTE;
     public static int ID_DESTINATARIO;
     public static String tabela;
-    public static int minutaAtual;
-    
+    public static int minutaAtual;    
 }

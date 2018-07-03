@@ -40,7 +40,11 @@ import panizio.model.Usuario;
 public class FormMinuta extends javax.swing.JFrame {
 
     private ConexaoBanco conex;
-
+    private static Nota_FiscalDAO nfDAO = new Nota_FiscalDAO();
+    private static MinutaDAO minDAO = new MinutaDAO();
+    private static RemetenteDAO remDAO = new RemetenteDAO();
+    private static DestinatarioDAO destDAO = new DestinatarioDAO(); 
+    
     public FormMinuta() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -388,6 +392,7 @@ public class FormMinuta extends javax.swing.JFrame {
 
         jLabel1.setText("Selecione um filtro para pesquisar:");
 
+        txtPesquisa1.setNextFocusableComponent(tblMinutas);
         txtPesquisa1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtPesquisa1KeyPressed(evt);
@@ -456,7 +461,6 @@ public class FormMinuta extends javax.swing.JFrame {
         popUpConsultar.add(popVisualizar);
 
         popRemover.setText("EXCLUIR");
-        popRemover.setActionCommand("EXCLUIR");
         popRemover.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 popRemoverActionPerformed(evt);
@@ -470,6 +474,7 @@ public class FormMinuta extends javax.swing.JFrame {
         formPesquisar.setResizable(false);
         formPesquisar.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        txtPesquisa.setNextFocusableComponent(tblRemetenteOuDestinatario);
         txtPesquisa.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtPesquisaKeyPressed(evt);
@@ -524,6 +529,11 @@ public class FormMinuta extends javax.swing.JFrame {
             }
             public void mouseReleased(java.awt.event.MouseEvent evt) {
                 tblRemetenteOuDestinatarioMouseReleased(evt);
+            }
+        });
+        tblRemetenteOuDestinatario.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                tblRemetenteOuDestinatarioKeyPressed(evt);
             }
         });
         jScrollPane1.setViewportView(tblRemetenteOuDestinatario);
@@ -894,7 +904,7 @@ public class FormMinuta extends javax.swing.JFrame {
         txtValorMinuta.setNextFocusableComponent(txtRemetente);
         txtValorMinuta.setPreferredSize(new java.awt.Dimension(14, 24));
 
-        txtValorNF.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("###0.00"))));
+        txtValorNF.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#######0.00"))));
         txtValorNF.setEnabled(false);
         txtValorNF.setNextFocusableComponent(txtPeso);
         txtValorNF.setPreferredSize(new java.awt.Dimension(14, 24));
@@ -1008,6 +1018,11 @@ public class FormMinuta extends javax.swing.JFrame {
         txtObservacao.setColumns(20);
         txtObservacao.setRows(5);
         txtObservacao.setEnabled(false);
+        txtObservacao.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtObservacaoKeyPressed(evt);
+            }
+        });
         jScrollPane2.setViewportView(txtObservacao);
 
         javax.swing.GroupLayout ObservaçãoLayout = new javax.swing.GroupLayout(Observação);
@@ -1077,9 +1092,9 @@ public class FormMinuta extends javax.swing.JFrame {
 
         subUsuarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/usuario 16x16.png"))); // NOI18N
         subUsuarios.setText("Usuarios");
-        subUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                subUsuariosMousePressed(evt);
+        subUsuarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                subUsuariosActionPerformed(evt);
             }
         });
         menuCadastros.add(subUsuarios);
@@ -1087,9 +1102,9 @@ public class FormMinuta extends javax.swing.JFrame {
 
         subCadastrarRemetentes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/remetente 16x16.png"))); // NOI18N
         subCadastrarRemetentes.setText("Remetentes");
-        subCadastrarRemetentes.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                subCadastrarRemetentesMousePressed(evt);
+        subCadastrarRemetentes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                subCadastrarRemetentesActionPerformed(evt);
             }
         });
         menuCadastros.add(subCadastrarRemetentes);
@@ -1097,9 +1112,9 @@ public class FormMinuta extends javax.swing.JFrame {
 
         subCadastrarDestinatarios.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/destinatario 16x16.png"))); // NOI18N
         subCadastrarDestinatarios.setText("Destinatários");
-        subCadastrarDestinatarios.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                subCadastrarDestinatariosMousePressed(evt);
+        subCadastrarDestinatarios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                subCadastrarDestinatariosActionPerformed(evt);
             }
         });
         menuCadastros.add(subCadastrarDestinatarios);
@@ -1110,9 +1125,9 @@ public class FormMinuta extends javax.swing.JFrame {
 
         subConsultarMinutas.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/minuta 16x16.png"))); // NOI18N
         subConsultarMinutas.setText("Minuta");
-        subConsultarMinutas.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                subConsultarMinutasMousePressed(evt);
+        subConsultarMinutas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                subConsultarMinutasActionPerformed(evt);
             }
         });
         menuConsulta.add(subConsultarMinutas);
@@ -1202,17 +1217,14 @@ public class FormMinuta extends javax.swing.JFrame {
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
         if (!AtributosGlobais.usuario.getPerfil().equals("ADMINISTRADOR")) {
-            subUsuarios.setEnabled(false);                       
-        }else if(AtributosGlobais.usuario.getPerfil().equals("PADRAO")){           
-            popRemover.setEnabled(false); 
+            subUsuarios.setEnabled(false);
         }
-        AtributosGlobais.minutaAtual = new MinutaDAO().obterProximo();
+        if (AtributosGlobais.usuario.getPerfil().equals("PADRAO")) {
+            popRemover.setEnabled(false);
+        }
+        AtributosGlobais.minutaAtual = this.minDAO.obterProximo();
         txtUsuario.setText(AtributosGlobais.usuario.getLogin());
     }//GEN-LAST:event_formWindowActivated
-
-    private void subUsuariosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_subUsuariosMousePressed
-        TransicaoTelas.abrir(new FormUsuario());
-    }//GEN-LAST:event_subUsuariosMousePressed
 
     private void menuSairMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuSairMouseClicked
         TransicaoTelas.trocar(this, new FormLogin());
@@ -1238,6 +1250,7 @@ public class FormMinuta extends javax.swing.JFrame {
                     txtObservacao, txtHora));
         }
         btnIncluir.setEnabled(false);
+        btnImprimir.setEnabled(false);
 
         ManipularCampos.habilitar_desabilitar(Arrays.asList(txtNF, txtValorNF, txtValorMinuta, txtPeso, txtVolumes,
                 txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtTelefone1, txtCEP1, txtCubico,
@@ -1297,13 +1310,13 @@ public class FormMinuta extends javax.swing.JFrame {
 
             Nota_Fiscal nf = new Nota_Fiscal(Integer.parseInt(txtVolumes.getText()), txtCubico.getText(),
                     txtPeso.getText(), txtValorNF.getText(), txtNF.getText());
-            if (new Nota_FiscalDAO().inserir(nf)) {
+            if (this.nfDAO.inserir(nf)) {
 
                 Minuta min = new Minuta(txtEmissao.getText() + txtHora.getText(), txtValorNF.getText(), AtributosGlobais.usuario.getId(), AtributosGlobais.ID_DESTINATARIO,
                         AtributosGlobais.ID_REMETENTE, txtObservacao.getText(), AtributosGlobais.ID_NF);
                 min.setId(Integer.parseInt(txtMinuta.getText()));
 
-                if (new MinutaDAO().inserir(min)) {
+                if (this.minDAO.inserir(min)) {
                     btnImprimir.setEnabled(true);
                     btnIncluir.setEnabled(true);
                     ManipularCampos.habilitar_desabilitar(Arrays.asList(txtNF, txtValorNF, txtValorMinuta, txtPeso, txtVolumes,
@@ -1327,7 +1340,7 @@ public class FormMinuta extends javax.swing.JFrame {
      */
     private void btnRemetenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemetenteActionPerformed
         AtributosGlobais.tabela = "Remetente";
-        preencherTabela((DefaultTableModel) tblRemetenteOuDestinatario.getModel());
+        preencherTabelaRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
         TransicaoTelas.abrirComTitulo(formPesquisar, "Consultar " + AtributosGlobais.tabela);
     }//GEN-LAST:event_btnRemetenteActionPerformed
 
@@ -1339,31 +1352,9 @@ public class FormMinuta extends javax.swing.JFrame {
      */
     private void btnDestinatarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDestinatarioActionPerformed
         AtributosGlobais.tabela = "Destinatario";
-        preencherTabela((DefaultTableModel) tblRemetenteOuDestinatario.getModel());
+        preencherTabelaRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
         TransicaoTelas.abrirComTitulo(formPesquisar, "Consultar " + AtributosGlobais.tabela);
     }//GEN-LAST:event_btnDestinatarioActionPerformed
-
-    /**
-     * Evento de clique no subMenu para cadastro de Remetentes
-     *
-     * @param evt
-     */
-    private void subCadastrarRemetentesMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_subCadastrarRemetentesMousePressed
-        AtributosGlobais.tabela = "Remetente";
-        formatarCamposPesquisa();
-        TransicaoTelas.abrirComTitulo(formEditarCadastrar, "Cadastrar " + AtributosGlobais.tabela);
-    }//GEN-LAST:event_subCadastrarRemetentesMousePressed
-
-    /**
-     * Evento de clique no subMenu para cadastro de Destinatários
-     *
-     * @param evt
-     */
-    private void subCadastrarDestinatariosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_subCadastrarDestinatariosMousePressed
-        AtributosGlobais.tabela = "Destinatario";
-        formatarCamposPesquisa();
-        TransicaoTelas.abrirComTitulo(formEditarCadastrar, "Cadastrar " + AtributosGlobais.tabela);
-    }//GEN-LAST:event_subCadastrarDestinatariosMousePressed
 
     /**
      * Executa o framePesquisar (Remetentes) caso a tecla F4 seja precionada
@@ -1373,7 +1364,7 @@ public class FormMinuta extends javax.swing.JFrame {
     private void txtRemetenteKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRemetenteKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_F4) {
             AtributosGlobais.tabela = "Remetente";
-            preencherTabela((DefaultTableModel) tblRemetenteOuDestinatario.getModel());
+            preencherTabelaRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
             TransicaoTelas.abrirComTitulo(formPesquisar, "Consultar " + AtributosGlobais.tabela);
         }
     }//GEN-LAST:event_txtRemetenteKeyPressed
@@ -1386,7 +1377,7 @@ public class FormMinuta extends javax.swing.JFrame {
     private void txtDestinatarioKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDestinatarioKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_F4) {
             AtributosGlobais.tabela = "Destinatario";
-            preencherTabela((DefaultTableModel) tblRemetenteOuDestinatario.getModel());
+            preencherTabelaRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
             TransicaoTelas.abrirComTitulo(formPesquisar, "Consultar " + AtributosGlobais.tabela);
         }
     }//GEN-LAST:event_txtDestinatarioKeyPressed
@@ -1411,7 +1402,7 @@ public class FormMinuta extends javax.swing.JFrame {
                         txtNome.getText(), txtCNPJ.getText(), txtCidade.getText(), txtEstado.getText(), txtTelefone.getText(),
                         txtCEP.getText());
                 rem.setId(AtributosGlobais.ID_REMETENTE);
-                if (!new RemetenteDAO().inserir(rem)) {
+                if (!this.remDAO.inserir(rem)) {
                     JOptionPane.showMessageDialog(null, "12 - Não foi possível cadastrar o remetente.", "ERRO", JOptionPane.ERROR_MESSAGE);
                 }
 
@@ -1419,7 +1410,7 @@ public class FormMinuta extends javax.swing.JFrame {
                 Destinatario dest = new Destinatario(txtEndereco.getText(), Integer.parseInt(txtNumero.getText()),
                         txtNome.getText(), txtCNPJ.getText(), txtCidade.getText(), txtEstado.getText(), txtTelefone.getText(), txtCEP.getText());
                 dest.setId(AtributosGlobais.ID_DESTINATARIO);
-                if (!new DestinatarioDAO().inserir(dest)) {
+                if (!this.destDAO.inserir(dest)) {
                     JOptionPane.showMessageDialog(null, "13 - Não foi possível cadastrar o destinatário.", "ERRO", JOptionPane.ERROR_MESSAGE);
                 }
 
@@ -1428,18 +1419,18 @@ public class FormMinuta extends javax.swing.JFrame {
                         txtNome.getText(), txtCNPJ.getText(), txtCidade.getText(), txtEstado.getText(), txtTelefone.getText(),
                         txtCEP.getText());
                 rem.setId(AtributosGlobais.ID_REMETENTE);
-                if (!new RemetenteDAO().alterar(rem)) {
+                if (!this.remDAO.alterar(rem)) {
                     JOptionPane.showMessageDialog(null, "14 - Não foi possível alterar o remetente.", "ERRO", JOptionPane.ERROR_MESSAGE);
                 }
             } else if (formEditarCadastrar.getTitle().equals("Editar Destinatario")) {
                 Destinatario dest = new Destinatario(txtEndereco.getText(), Integer.parseInt(txtNumero.getText()),
                         txtNome.getText(), txtCNPJ.getText(), txtCidade.getText(), txtEstado.getText(), txtTelefone.getText(), txtCEP.getText());
                 dest.setId(AtributosGlobais.ID_DESTINATARIO);
-                if (!new DestinatarioDAO().alterar(dest)) {
+                if (!this.destDAO.alterar(dest)) {
                     JOptionPane.showMessageDialog(null, "15 - Não foi possível alterar o destinatário.", "ERRO", JOptionPane.ERROR_MESSAGE);
                 }
             }
-            preencherTabela((DefaultTableModel) tblRemetenteOuDestinatario.getModel());
+            preencherTabelaRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
             formEditarCadastrar.dispose();
         } else {
             JOptionPane.showMessageDialog(null, "Verifique se os campos foram preenchidos corretamente.", "Atenção", JOptionPane.WARNING_MESSAGE);
@@ -1480,7 +1471,7 @@ public class FormMinuta extends javax.swing.JFrame {
                         + "M.ID_DESTINATARIO = D.ID_DESTINATARIO AND " + filtro + " LIKE '"
                         + txtPesquisa1.getText().toUpperCase() + "%' ORDER BY 1 DESC";
 
-                preencherTabela((DefaultTableModel) tblMinutas.getModel(), sql);
+                preencherTabelaMinutas((DefaultTableModel) tblMinutas.getModel(), sql);
             }
         }
     }//GEN-LAST:event_btnPesquisarActionPerformed
@@ -1502,18 +1493,18 @@ public class FormMinuta extends javax.swing.JFrame {
      * @param evt
      */
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        preencherTabela((DefaultTableModel) tblRemetenteOuDestinatario.getModel());
+        preencherTabelaRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
         txtPesquisa.setText(null);
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void popVisualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_popVisualizarActionPerformed
         int id_minuta = (int) tblMinutas.getValueAt(tblMinutas.getSelectedRow(), 0);
 
-        Minuta minuta = new MinutaDAO().obter(id_minuta);
-        Remetente remetente = new RemetenteDAO().obterRemetente(minuta.getId_remetente());
-        Destinatario destinatario = new DestinatarioDAO().obterDestinatario(minuta.getId_destinatario());
-        Nota_Fiscal nf = new Nota_FiscalDAO().obterNotaFiscal(minuta.getId_nf());
-        Usuario usuario = new UsuarioDAO().obterUsuario(minuta.getId_usuario());
+        Minuta minuta = this.minDAO.obter(id_minuta);
+        Remetente remetente = this.remDAO.obter(minuta.getId_remetente());
+        Destinatario destinatario = this.destDAO.obter(minuta.getId_destinatario());
+        Nota_Fiscal nf = this.nfDAO.obter(minuta.getId_nf());
+        Usuario usuario = new UsuarioDAO().obter(minuta.getId_usuario());
 
         Map<String, Object> parametrosRelatorio = new HashMap<>();
         //PRIMEIRO PAINEL - DADOS NOTA E MINUTA
@@ -1642,7 +1633,7 @@ public class FormMinuta extends javax.swing.JFrame {
     private void popEditarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_popEditarMousePressed
         if (formPesquisar.getTitle().equals("Consultar Remetente")) {
             AtributosGlobais.ID_REMETENTE = (int) tblRemetenteOuDestinatario.getValueAt(tblRemetenteOuDestinatario.getSelectedRow(), 0);
-            Remetente rem = new RemetenteDAO().obterRemetente(AtributosGlobais.ID_REMETENTE);
+            Remetente rem = this.remDAO.obter(AtributosGlobais.ID_REMETENTE);
             txtEndereco.setText(rem.getEndereco());
             txtNumero.setText(String.valueOf(rem.getNumero()));
             txtNome.setText(rem.getNome());
@@ -1653,7 +1644,7 @@ public class FormMinuta extends javax.swing.JFrame {
             txtCEP.setText(rem.getCep());
         } else if (formPesquisar.getTitle().equals("Consultar Destinatario")) {
             AtributosGlobais.ID_DESTINATARIO = (int) tblRemetenteOuDestinatario.getValueAt(tblRemetenteOuDestinatario.getSelectedRow(), 0);
-            Destinatario dest = new DestinatarioDAO().obterDestinatario(AtributosGlobais.ID_DESTINATARIO);
+            Destinatario dest = this.destDAO.obter(AtributosGlobais.ID_DESTINATARIO);
             txtEndereco.setText(dest.getEndereco());
             txtNumero.setText(String.valueOf(dest.getNumero()));
             txtNome.setText(dest.getNome());
@@ -1668,30 +1659,9 @@ public class FormMinuta extends javax.swing.JFrame {
 
     private void txtPesquisaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisaKeyTyped
         String sql = "SELECT ID_" + AtributosGlobais.tabela + ", NOME, CNPJ, ENDERECO FROM "
-                + AtributosGlobais.tabela + " WHERE NOME LIKE '" + txtPesquisa.getText().toUpperCase() + "%' ORDER BY 1 DESC";
-        this.conex.connect();
-
-        try {
-            PreparedStatement pst = this.conex.c.prepareStatement(sql);
-            ResultSet rs = pst.executeQuery();
-            DefaultTableModel model = (DefaultTableModel) tblRemetenteOuDestinatario.getModel();
-
-            while (model.getRowCount() > 0) {
-                model.removeRow(0);
-            }
-            while (rs.next()) {
-                model.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)});
-            }
-
-            tblRemetenteOuDestinatario.getColumnModel().getColumn(0).setPreferredWidth(10);
-            tblRemetenteOuDestinatario.getColumnModel().getColumn(1).setPreferredWidth(100);
-            tblRemetenteOuDestinatario.getColumnModel().getColumn(2).setPreferredWidth(80);
-            tblRemetenteOuDestinatario.getColumnModel().getColumn(3).setPreferredWidth(180);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            this.conex.disconnect();
-        }
+            + AtributosGlobais.tabela + " WHERE NOME LIKE '" + txtPesquisa.getText().toUpperCase() + "%' ORDER BY 1 DESC";
+        
+        preencherTabelaRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), sql);
     }//GEN-LAST:event_txtPesquisaKeyTyped
 
     private void txtPesquisa1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisa1KeyPressed
@@ -1701,18 +1671,13 @@ public class FormMinuta extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Selecione um filtro! ", "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
             }
         } else if (txtPesquisa1.getText().length() == 1) {
-            preencherTabela((DefaultTableModel) tblMinutas.getModel(), null);
+            preencherTabelaMinutas((DefaultTableModel) tblMinutas.getModel(), null);
         }
     }//GEN-LAST:event_txtPesquisa1KeyPressed
 
     private void btnSalvar1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnSalvar1KeyPressed
         salvarRemetenteDestinatario();
     }//GEN-LAST:event_btnSalvar1KeyPressed
-
-    private void subConsultarMinutasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_subConsultarMinutasMousePressed
-        preencherTabela((DefaultTableModel) tblMinutas.getModel(), null);
-        TransicaoTelas.abrir(formConsultar);
-    }//GEN-LAST:event_subConsultarMinutasMousePressed
 
     private void subConsultarDestinatariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subConsultarDestinatariosActionPerformed
         btnDestinatarioActionPerformed(evt);
@@ -1775,9 +1740,64 @@ public class FormMinuta extends javax.swing.JFrame {
 
         if (opcao == JOptionPane.YES_OPTION) {
             //Usuário clicou em Sim. Executar o código correspondente.
-            new MinutaDAO().remover((int) tblMinutas.getValueAt(tblMinutas.getSelectedRow(), 0));
-        } 
+            if (this.minDAO.remover((int) tblMinutas.getValueAt(tblMinutas.getSelectedRow(), 0))) {
+                //Atualiza a tabela
+                preencherTabelaMinutas((DefaultTableModel) tblMinutas.getModel(), null);
+                AtributosGlobais.minutaAtual--;
+            }
+        }
     }//GEN-LAST:event_popRemoverActionPerformed
+
+    private void subUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subUsuariosActionPerformed
+        TransicaoTelas.abrir(new FormUsuario());
+    }//GEN-LAST:event_subUsuariosActionPerformed
+
+    /**
+     * Evento de clique no subMenu para cadastro de Remetentes
+     *
+     * @param evt
+     */
+    private void subCadastrarRemetentesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subCadastrarRemetentesActionPerformed
+        AtributosGlobais.tabela = "Remetente";
+        formatarCamposPesquisa();
+        TransicaoTelas.abrirComTitulo(formEditarCadastrar, "Cadastrar " + AtributosGlobais.tabela);
+    }//GEN-LAST:event_subCadastrarRemetentesActionPerformed
+
+    /**
+     * Evento de clique no subMenu para cadastro de Destinatários
+     *
+     * @param evt
+     */
+    private void subCadastrarDestinatariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subCadastrarDestinatariosActionPerformed
+        AtributosGlobais.tabela = "Destinatario";
+        formatarCamposPesquisa();
+        TransicaoTelas.abrirComTitulo(formEditarCadastrar, "Cadastrar " + AtributosGlobais.tabela);
+    }//GEN-LAST:event_subCadastrarDestinatariosActionPerformed
+
+    private void subConsultarMinutasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subConsultarMinutasActionPerformed
+        preencherTabelaMinutas((DefaultTableModel) tblMinutas.getModel(), null);
+        TransicaoTelas.abrir(formConsultar);
+    }//GEN-LAST:event_subConsultarMinutasActionPerformed
+
+    private void tblRemetenteOuDestinatarioKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblRemetenteOuDestinatarioKeyPressed
+        if (!btnIncluir.isEnabled() && tblRemetenteOuDestinatario.getSelectedRow() != -1) {
+            if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                if (formPesquisar.getTitle().equals("Consultar Remetente")) {
+                    AtributosGlobais.ID_REMETENTE = (int) tblRemetenteOuDestinatario.getValueAt(tblRemetenteOuDestinatario.getSelectedRow(), 0);
+                    setPesquisa(AtributosGlobais.ID_REMETENTE);
+                } else {
+                    AtributosGlobais.ID_DESTINATARIO = (int) tblRemetenteOuDestinatario.getValueAt(tblRemetenteOuDestinatario.getSelectedRow(), 0);
+                    setPesquisa(AtributosGlobais.ID_DESTINATARIO);
+                }
+                txtPesquisa.setText(null);
+                formPesquisar.dispose();
+            }
+        }
+    }//GEN-LAST:event_tblRemetenteOuDestinatarioKeyPressed
+
+    private void txtObservacaoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtObservacaoKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_TAB)  btnSalvar.requestFocus();
+    }//GEN-LAST:event_txtObservacaoKeyPressed
 
     /**
      * Imprime a minuta atual, recém feita ainda em cache.
@@ -1788,9 +1808,12 @@ public class FormMinuta extends javax.swing.JFrame {
             try {                                                 //\\SoftPan\\ireport\\doc-minuta.jasper
                 JasperPrint print = JasperFillManager.fillReport("\\SoftPan\\ireport\\doc-minuta.jasper", parametrosRelatorio, this.conex.getConnection());
                 JasperViewer jv = new JasperViewer(print, false);
+                
+                //abrindo maximizado
+                jv.setExtendedState(JasperViewer.MAXIMIZED_BOTH);
                 jv.setVisible(true);
-                jv.setTitle("Visualização da Minuta " + id_minuta);
-                jv.requestFocus();
+                
+                jv.setTitle("Visualização da Minuta " + id_minuta);               
                 //JasperViewer.viewReport(print, false);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1810,14 +1833,13 @@ public class FormMinuta extends javax.swing.JFrame {
      */
     public void setPesquisa(int id) {
         this.conex.connect();
-        String sql = "SELECT ENDERECO, NUMERO, NOME, CNPJ, CIDADE, ESTADO, TELEFONE, CEP "
-                + "FROM " + AtributosGlobais.tabela + " WHERE ID_" + AtributosGlobais.tabela + " = ?";
-
+       
         try {
-            PreparedStatement pst = this.conex.c.prepareStatement(sql);
-            pst.setInt(1, id);
+             String sql = "SELECT ENDERECO, NUMERO, NOME, CNPJ, CIDADE, ESTADO, TELEFONE, CEP "
+                + "FROM " + AtributosGlobais.tabela + " WHERE ID_" + AtributosGlobais.tabela + " = "+id;
 
-            ResultSet rs = pst.executeQuery();
+            ResultSet rs = this.conex.executar(sql);
+            
             while (rs.next()) {
                 if (AtributosGlobais.tabela.equals("Remetente")) {
                     txtEndereco1.setText(rs.getString(1));
@@ -1854,14 +1876,16 @@ public class FormMinuta extends javax.swing.JFrame {
      * @param modelo
      * @param tabela
      */
-    private void preencherTabela(DefaultTableModel modelo) {
-        String sql = "SELECT ID_" + AtributosGlobais.tabela + ", NOME, CNPJ, ENDERECO FROM "
-                + AtributosGlobais.tabela + " ORDER BY 1 DESC";
+    private void preencherTabelaRemOuDest(DefaultTableModel modelo, String sql) {        
         this.conex.connect();
 
         try {
-            PreparedStatement pst = this.conex.c.prepareStatement(sql);
-            ResultSet rs = pst.executeQuery();
+            if(sql == null){
+               sql = "SELECT ID_" + AtributosGlobais.tabela + ", NOME, CNPJ, ENDERECO "
+                     + "FROM " + AtributosGlobais.tabela + " ORDER BY 1 DESC";
+            }
+            
+            ResultSet rs = this.conex.executar(sql);
             DefaultTableModel model = modelo;
 
             while (model.getRowCount() > 0) {
@@ -1887,21 +1911,20 @@ public class FormMinuta extends javax.swing.JFrame {
      *
      * @param modelo
      */
-    private void preencherTabela(DefaultTableModel modelo, String sql) {
-        if (sql == null) {
-            sql = "SELECT M.ID_MINUTA, R.NOME, D.NOME, N.NF "
+    private void preencherTabelaMinutas(DefaultTableModel modelo, String sql) {
+        this.conex.connect();
+
+        try {
+            if (sql == null) {
+                sql = "SELECT M.ID_MINUTA, R.NOME, D.NOME, N.NF "
                     + "FROM MINUTA M, NOTA_FISCAL N, REMETENTE R, DESTINATARIO D "
                     + "WHERE M.ID_NF = N.ID_NF AND "
                     + "M.ID_REMETENTE = R.ID_REMETENTE AND "
                     + "M.ID_DESTINATARIO = D.ID_DESTINATARIO "
                     + "ORDER BY 1 DESC";
-        }
-
-        this.conex.connect();
-
-        try {
-            PreparedStatement pst = this.conex.c.prepareStatement(sql);
-            ResultSet rs = pst.executeQuery();
+            }
+            
+            ResultSet rs = this.conex.executar(sql);
             DefaultTableModel model = modelo;
 
             while (model.getRowCount() > 0) {

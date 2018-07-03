@@ -7,7 +7,9 @@ package panizio.conexao;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 /**
  *
@@ -22,7 +24,7 @@ public class ConexaoBanco {
     private final String pass;    
     
     public ConexaoBanco() {
-        this.url = "jdbc:oracle:thin:@192.168.15.30:1521:xe";
+        this.url = "jdbc:oracle:thin:@localhost:1521:xe";
         this.user = "hr";
         this.pass = "hr";        
     }
@@ -60,28 +62,28 @@ public class ConexaoBanco {
     }
     
     /**
-//     * Esse método executa a query dada, e retorna um ResultSet
-//     * Talvez fosse melhor idéia fazer esse método lançar uma exception
-//     * a faze-lo retornar null como eu fiz, porém isso é apenas um exemplo
-//     * para demonstrar a funcionalidade do comando execute
-//     *
-//     * @param query String contendo a query que se deseja executar
-//     * @return ResultSet em caso de estar tudo Ok, null em caso de erro.
-//     */
-//    public ResultSet executar( String query ) {
-//        Statement st;
-//        ResultSet rs;
-//       
-//        try {
-//            st = this.con.createStatement();
-//            rs = st.executeQuery(query);
-//            return rs;
-//        } catch ( SQLException e ) {
-//            e.printStackTrace();
-//        }
-//       
-//        return null;
-//    }
+     * Esse método executa a query dada, e retorna um ResultSet
+     * Talvez fosse melhor idéia fazer esse método lançar uma exception
+     * a faze-lo retornar null como eu fiz, porém isso é apenas um exemplo
+     * para demonstrar a funcionalidade do comando execute
+     *
+     * @param query String contendo a query que se deseja executar
+     * @return ResultSet em caso de estar tudo Ok, null em caso de erro.
+     */
+    public ResultSet executar( String query ) {
+        Statement st;
+        ResultSet rs;
+       
+        try {
+            st = this.c.createStatement();
+            rs = st.executeQuery(query);
+            return rs;
+        } catch ( SQLException e ) {
+            e.printStackTrace();
+        }
+       
+        return null;
+    }
    
 //    /**
 //     * Executa uma query como update, delete ou insert.

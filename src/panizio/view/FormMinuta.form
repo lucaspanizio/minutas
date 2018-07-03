@@ -418,6 +418,11 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JTextField" name="txtPesquisa1">
+              <Properties>
+                <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+                  <ComponentRef name="tblMinutas"/>
+                </Property>
+              </Properties>
               <Events>
                 <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtPesquisa1KeyPressed"/>
               </Events>
@@ -454,7 +459,6 @@
         <MenuItem class="javax.swing.JMenuItem" name="popRemover">
           <Properties>
             <Property name="text" type="java.lang.String" value="EXCLUIR"/>
-            <Property name="actionCommand" type="java.lang.String" value="EXCLUIR"/>
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="popRemoverActionPerformed"/>
@@ -479,6 +483,11 @@
       </Layout>
       <SubComponents>
         <Component class="javax.swing.JTextField" name="txtPesquisa">
+          <Properties>
+            <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
+              <ComponentRef name="tblRemetenteOuDestinatario"/>
+            </Property>
+          </Properties>
           <Events>
             <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtPesquisaKeyPressed"/>
             <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtPesquisaKeyTyped"/>
@@ -558,6 +567,7 @@
               <Events>
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tblRemetenteOuDestinatarioMouseClicked"/>
                 <EventHandler event="mouseReleased" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="tblRemetenteOuDestinatarioMouseReleased"/>
+                <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="tblRemetenteOuDestinatarioKeyPressed"/>
               </Events>
             </Component>
           </SubComponents>
@@ -600,7 +610,7 @@
                 <Property name="text" type="java.lang.String" value="Usuarios"/>
               </Properties>
               <Events>
-                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="subUsuariosMousePressed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="subUsuariosActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
@@ -613,7 +623,7 @@
                 <Property name="text" type="java.lang.String" value="Remetentes"/>
               </Properties>
               <Events>
-                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="subCadastrarRemetentesMousePressed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="subCadastrarRemetentesActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
@@ -626,7 +636,7 @@
                 <Property name="text" type="java.lang.String" value="Destinat&#xe1;rios"/>
               </Properties>
               <Events>
-                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="subCadastrarDestinatariosMousePressed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="subCadastrarDestinatariosActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
@@ -644,7 +654,7 @@
                 <Property name="text" type="java.lang.String" value="Minuta"/>
               </Properties>
               <Events>
-                <EventHandler event="mousePressed" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="subConsultarMinutasMousePressed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="subConsultarMinutasActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="sucConsultarRemetentes">
@@ -1475,7 +1485,7 @@
         <Component class="javax.swing.JFormattedTextField" name="txtValorNF">
           <Properties>
             <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
-              <Format format="###0.00" subtype="-1" type="0"/>
+              <Format format="#######0.00" subtype="-1" type="0"/>
             </Property>
             <Property name="enabled" type="boolean" value="false"/>
             <Property name="nextFocusableComponent" type="java.awt.Component" editor="org.netbeans.modules.form.ComponentChooserEditor">
@@ -1575,6 +1585,9 @@
                 <Property name="rows" type="int" value="5"/>
                 <Property name="enabled" type="boolean" value="false"/>
               </Properties>
+              <Events>
+                <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="txtObservacaoKeyPressed"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>

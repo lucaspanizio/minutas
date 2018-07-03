@@ -63,6 +63,7 @@ public class FormUsuario extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Usuários");
         setMinimumSize(new java.awt.Dimension(717, 466));
+        setPreferredSize(new java.awt.Dimension(718, 430));
         setResizable(false);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 

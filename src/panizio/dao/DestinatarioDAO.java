@@ -73,13 +73,16 @@ public class DestinatarioDAO {
     }
     
     
-    public Destinatario obterDestinatario(int id){
+    public Destinatario obter(int id){
         this.conex.connect();
-        String sql = "SELECT ENDERECO, NUMERO, NOME, CNPJ, CIDADE, ESTADO, TELEFONE, CEP "
-                   + "FROM DESTINATARIO WHERE ID_DESTINATARIO = ?";                   
+                    
 
         try {
+            String sql = "SELECT ENDERECO, NUMERO, NOME, CNPJ, CIDADE, ESTADO, TELEFONE, CEP "
+                   + "FROM DESTINATARIO WHERE ID_DESTINATARIO = ?";  
+            
             PreparedStatement pst = this.conex.c.prepareStatement(sql);
+            
             pst.setInt(1, id); 
             
             ResultSet rs = pst.executeQuery();
