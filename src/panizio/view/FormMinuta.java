@@ -17,19 +17,18 @@ import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.view.JasperViewer;
+import panizio.dao.TabelasDAO;
 import panizio.dao.UsuarioDAO;
 import panizio.model.Usuario;
 
@@ -44,8 +43,8 @@ public class FormMinuta extends javax.swing.JFrame {
     private static MinutaDAO minDAO = new MinutaDAO();
     private static RemetenteDAO remDAO = new RemetenteDAO();
     private static DestinatarioDAO destDAO = new DestinatarioDAO();
-    //private enum Ocorrencias {ENTREGUE, AVARIA, AUSENTE, RECUSA, DEVOLUCAO, EXTRAVIO, FECHAR, OUTRAS};
-
+    private static TabelasDAO tblDAO = new TabelasDAO();
+    
     public FormMinuta() {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -105,30 +104,6 @@ public class FormMinuta extends javax.swing.JFrame {
         tblRemetenteOuDestinatario = new javax.swing.JTable();
         popUpPesquisar = new javax.swing.JPopupMenu();
         popEditar = new javax.swing.JMenuItem();
-        formOcorrencias = new javax.swing.JDialog();
-        jPanel2 = new javax.swing.JPanel();
-        btnPesquisarOc = new javax.swing.JButton();
-        txtPesquisarOcorrencia = new javax.swing.JTextField();
-        jLabel2 = new javax.swing.JLabel();
-        jScrollPane4 = new javax.swing.JScrollPane();
-        tblOcorrencias = new javax.swing.JTable();
-        jSeparator3 = new javax.swing.JSeparator();
-        jPanel4 = new javax.swing.JPanel();
-        cmbOcorrencias = new javax.swing.JComboBox<>();
-        lblOcorrencias = new javax.swing.JLabel();
-        lblDataReceb = new javax.swing.JLabel();
-        txtDataReceb = new javax.swing.JFormattedTextField();
-        lblNomeReceb = new javax.swing.JLabel();
-        txtNomeReceb = new javax.swing.JTextField();
-        btnSalvarOc = new javax.swing.JButton();
-        jScrollPane6 = new javax.swing.JScrollPane();
-        txtDescricaoOc = new javax.swing.JTextArea();
-        lblCodOcorrencia = new javax.swing.JLabel();
-        txtCodOcorrencia = new javax.swing.JTextField();
-        btnIncluirOc = new javax.swing.JButton();
-        lblCodMinuta = new javax.swing.JLabel();
-        txtCodMinuta = new javax.swing.JTextField();
-        btnCancelarOc = new javax.swing.JButton();
         Remetente = new javax.swing.JPanel();
         lblRemetente = new javax.swing.JLabel();
         txtRemetente = new javax.swing.JTextField();
@@ -571,257 +546,6 @@ public class FormMinuta extends javax.swing.JFrame {
             }
         });
         popUpPesquisar.add(popEditar);
-
-        formOcorrencias.setTitle("Consultar Ocorrências");
-        formOcorrencias.setMinimumSize(new java.awt.Dimension(667, 650));
-        formOcorrencias.setPreferredSize(new java.awt.Dimension(667, 650));
-        formOcorrencias.setResizable(false);
-        formOcorrencias.getContentPane().setLayout(null);
-
-        jPanel2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        btnPesquisarOc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/zoom 20x20.png"))); // NOI18N
-        btnPesquisarOc.setText("PESQUISAR");
-        btnPesquisarOc.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnPesquisarOcActionPerformed(evt);
-            }
-        });
-        btnPesquisarOc.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                btnPesquisarOcKeyPressed(evt);
-            }
-        });
-
-        txtPesquisarOcorrencia.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtPesquisarOcorrenciaKeyPressed(evt);
-            }
-        });
-
-        jLabel2.setText("Digite o número da Minuta para pesquisar suas ocorrências");
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(147, 147, 147)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(txtPesquisarOcorrencia, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(btnPesquisarOc)))
-                .addContainerGap(143, Short.MAX_VALUE))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnPesquisarOc)
-                    .addComponent(txtPesquisarOcorrencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(16, Short.MAX_VALUE))
-        );
-
-        formOcorrencias.getContentPane().add(jPanel2);
-        jPanel2.setBounds(10, 10, 640, 90);
-
-        tblOcorrencias.setAutoCreateRowSorter(true);
-        tblOcorrencias.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "Emissão Minuta", "Nota Fiscal", "Ocorrência", "Data Oc.", "Usuário"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        tblOcorrencias.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                tblOcorrenciasMouseReleased(evt);
-            }
-        });
-        tblOcorrencias.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                tblOcorrenciasKeyPressed(evt);
-            }
-        });
-        jScrollPane4.setViewportView(tblOcorrencias);
-
-        formOcorrencias.getContentPane().add(jScrollPane4);
-        jScrollPane4.setBounds(10, 100, 640, 210);
-        formOcorrencias.getContentPane().add(jSeparator3);
-        jSeparator3.setBounds(10, 322, 640, 10);
-
-        jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        cmbOcorrencias.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " ", "1 - ENTREGA REALIZADA", "2 - AVARIA", "3 - CLIENTE AUSENTE", "4 - RECUSA", "5 - DEVOLUÇÃO", "6 - EXTRAVIO", "7 - OCORRENCIA FECHADA", "8 - FALTA DE TEMPO", "9 - OUTRAS OCORRENCIAS" }));
-        cmbOcorrencias.setEnabled(false);
-        cmbOcorrencias.setMinimumSize(new java.awt.Dimension(50, 24));
-        cmbOcorrencias.setPreferredSize(new java.awt.Dimension(50, 24));
-
-        lblOcorrencias.setText("Ocorrências");
-
-        lblDataReceb.setText("Data do Recebimento");
-
-        try {
-            txtDataReceb.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
-        txtDataReceb.setEnabled(false);
-        txtDataReceb.setMinimumSize(new java.awt.Dimension(14, 24));
-        txtDataReceb.setPreferredSize(new java.awt.Dimension(14, 24));
-
-        lblNomeReceb.setText("Nome do Recebedor");
-
-        txtNomeReceb.setEnabled(false);
-        txtNomeReceb.setNextFocusableComponent(txtDescricaoOc);
-
-        btnSalvarOc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/check 22x22.png"))); // NOI18N
-        btnSalvarOc.setText("SALVAR");
-        btnSalvarOc.setEnabled(false);
-        btnSalvarOc.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSalvarOcActionPerformed(evt);
-            }
-        });
-        btnSalvarOc.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                btnSalvarOcKeyPressed(evt);
-            }
-        });
-
-        txtDescricaoOc.setColumns(20);
-        txtDescricaoOc.setRows(5);
-        txtDescricaoOc.setBorder(javax.swing.BorderFactory.createTitledBorder("Descrição"));
-        txtDescricaoOc.setEnabled(false);
-        txtDescricaoOc.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtDescricaoOcKeyPressed(evt);
-            }
-        });
-        jScrollPane6.setViewportView(txtDescricaoOc);
-
-        lblCodOcorrencia.setText("Cód. Ocorrência");
-
-        txtCodOcorrencia.setEnabled(false);
-
-        btnIncluirOc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/add 27x27.png"))); // NOI18N
-        btnIncluirOc.setText("INCLUIR");
-        btnIncluirOc.setEnabled(false);
-        btnIncluirOc.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnIncluirOcActionPerformed(evt);
-            }
-        });
-
-        lblCodMinuta.setText("Cod. Minuta");
-
-        txtCodMinuta.setEnabled(false);
-
-        btnCancelarOc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/cancel 22x22 (2).png"))); // NOI18N
-        btnCancelarOc.setText("CANCELAR");
-        btnCancelarOc.setEnabled(false);
-        btnCancelarOc.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelarOcActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(btnIncluirOc, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCancelarOc, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSalvarOc, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12))
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addComponent(lblCodOcorrencia, javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(txtCodOcorrencia, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
-                                        .addGap(20, 20, 20)
-                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(lblOcorrencias)
-                                            .addComponent(cmbOcorrencias, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(lblCodMinuta)
-                                            .addComponent(txtCodMinuta, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(18, 18, 18)
-                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(lblDataReceb)
-                                            .addComponent(txtDataReceb, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addComponent(lblNomeReceb))
-                                .addGap(20, 20, 20)
-                                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(txtNomeReceb, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(9, Short.MAX_VALUE))))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnSalvarOc)
-                    .addComponent(btnIncluirOc, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addComponent(btnCancelarOc))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(8, 8, 8)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(lblCodMinuta)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCodMinuta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(lblDataReceb)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtDataReceb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(lblCodOcorrencia)
-                                .addGap(4, 4, 4)
-                                .addComponent(txtCodOcorrencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(lblOcorrencias)
-                                .addGap(4, 4, 4)
-                                .addComponent(cmbOcorrencias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addComponent(lblNomeReceb)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNomeReceb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane6))
-                .addGap(25, 25, 25))
-        );
-
-        formOcorrencias.getContentPane().add(jPanel4);
-        jPanel4.setBounds(10, 340, 639, 270);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Minutas - Panizio Transportes");
@@ -1611,7 +1335,7 @@ public class FormMinuta extends javax.swing.JFrame {
      */
     private void btnRemetenteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemetenteActionPerformed
         AtributosGlobais.tabela = "Remetente";
-        preencherTabelaRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
+        tblDAO.atualizarTblRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
         TransicaoTelas.abrirComTitulo(formPesquisar, "Consultar " + AtributosGlobais.tabela);
     }//GEN-LAST:event_btnRemetenteActionPerformed
 
@@ -1623,7 +1347,7 @@ public class FormMinuta extends javax.swing.JFrame {
      */
     private void btnDestinatarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDestinatarioActionPerformed
         AtributosGlobais.tabela = "Destinatario";
-        preencherTabelaRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
+        tblDAO.atualizarTblRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
         TransicaoTelas.abrirComTitulo(formPesquisar, "Consultar " + AtributosGlobais.tabela);
     }//GEN-LAST:event_btnDestinatarioActionPerformed
 
@@ -1635,7 +1359,7 @@ public class FormMinuta extends javax.swing.JFrame {
     private void txtRemetenteKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtRemetenteKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_F4) {
             AtributosGlobais.tabela = "Remetente";
-            preencherTabelaRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
+            tblDAO.atualizarTblRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
             TransicaoTelas.abrirComTitulo(formPesquisar, "Consultar " + AtributosGlobais.tabela);
         }
     }//GEN-LAST:event_txtRemetenteKeyPressed
@@ -1648,7 +1372,7 @@ public class FormMinuta extends javax.swing.JFrame {
     private void txtDestinatarioKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDestinatarioKeyPressed
         if (evt.getKeyCode() == KeyEvent.VK_F4) {
             AtributosGlobais.tabela = "Destinatario";
-            preencherTabelaRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
+            tblDAO.atualizarTblRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
             TransicaoTelas.abrirComTitulo(formPesquisar, "Consultar " + AtributosGlobais.tabela);
         }
     }//GEN-LAST:event_txtDestinatarioKeyPressed
@@ -1701,7 +1425,7 @@ public class FormMinuta extends javax.swing.JFrame {
                     JOptionPane.showMessageDialog(null, "15 - Não foi possível alterar o destinatário.", "ERRO", JOptionPane.ERROR_MESSAGE);
                 }
             }
-            preencherTabelaRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
+            tblDAO.atualizarTblRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
             formEditarCadastrar.dispose();
         } else {
             JOptionPane.showMessageDialog(null, "Verifique se os campos foram preenchidos corretamente.", "Atenção", JOptionPane.WARNING_MESSAGE);
@@ -1742,7 +1466,7 @@ public class FormMinuta extends javax.swing.JFrame {
                         + "M.ID_DESTINATARIO = D.ID_DESTINATARIO AND " + filtro + " LIKE '"
                         + txtPesquisa1.getText().toUpperCase() + "%' ORDER BY 1 DESC";
 
-                preencherTabelaMinutas((DefaultTableModel) tblMinutas.getModel(), sql);
+                tblDAO.atualizarTblMinutas((DefaultTableModel) tblMinutas.getModel(), sql);
             }
         }
     }//GEN-LAST:event_btnPesquisarActionPerformed
@@ -1764,7 +1488,7 @@ public class FormMinuta extends javax.swing.JFrame {
      * @param evt
      */
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        preencherTabelaRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
+        tblDAO.atualizarTblRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
         txtPesquisa.setText(null);
     }//GEN-LAST:event_btnCancelActionPerformed
 
@@ -1932,7 +1656,7 @@ public class FormMinuta extends javax.swing.JFrame {
         String sql = "SELECT ID_" + AtributosGlobais.tabela + ", NOME, CNPJ, ENDERECO FROM "
                 + AtributosGlobais.tabela + " WHERE NOME LIKE '" + txtPesquisa.getText().toUpperCase() + "%' ORDER BY 1 DESC";
 
-        preencherTabelaRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), sql);
+        tblDAO.atualizarTblRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), sql);
     }//GEN-LAST:event_txtPesquisaKeyTyped
 
     private void txtPesquisa1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisa1KeyPressed
@@ -1942,7 +1666,7 @@ public class FormMinuta extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Selecione um filtro! ", "ATENÇÃO", JOptionPane.WARNING_MESSAGE);
             }
         } else if (txtPesquisa1.getText().length() == 1) {
-            preencherTabelaMinutas((DefaultTableModel) tblMinutas.getModel(), null);
+            tblDAO.atualizarTblMinutas((DefaultTableModel) tblMinutas.getModel(), null);
         }
     }//GEN-LAST:event_txtPesquisa1KeyPressed
 
@@ -2013,7 +1737,7 @@ public class FormMinuta extends javax.swing.JFrame {
             //Usuário clicou em Sim. Executar o código correspondente.
             if (this.minDAO.remover((int) tblMinutas.getValueAt(tblMinutas.getSelectedRow(), 0))) {
                 //Atualiza a tabela
-                preencherTabelaMinutas((DefaultTableModel) tblMinutas.getModel(), null);
+                tblDAO.atualizarTblMinutas((DefaultTableModel) tblMinutas.getModel(), null);
                 AtributosGlobais.minutaAtual--;
             }
         }
@@ -2046,7 +1770,7 @@ public class FormMinuta extends javax.swing.JFrame {
     }//GEN-LAST:event_subCadastrarDestinatariosActionPerformed
 
     private void subConsultarMinutasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subConsultarMinutasActionPerformed
-        preencherTabelaMinutas((DefaultTableModel) tblMinutas.getModel(), null);
+        tblDAO.atualizarTblMinutas((DefaultTableModel) tblMinutas.getModel(), null);
         TransicaoTelas.abrir(formConsultarMinutas);
     }//GEN-LAST:event_subConsultarMinutasActionPerformed
 
@@ -2078,81 +1802,13 @@ public class FormMinuta extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnSalvarKeyPressed
 
-    private void tblOcorrenciasMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblOcorrenciasMouseReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tblOcorrenciasMouseReleased
-
-    private void tblOcorrenciasKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblOcorrenciasKeyPressed
-
-    }//GEN-LAST:event_tblOcorrenciasKeyPressed
-
     private void menuOcorrenciasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuOcorrenciasMousePressed
-        TransicaoTelas.abrir(formOcorrencias);
+        FormOcorrencia formOc = new FormOcorrencia();
+        formOc.setLocation(this.getX()+20, this.getY()+20);
+        formOc.setVisible(true);
     }//GEN-LAST:event_menuOcorrenciasMousePressed
 
-    private void btnPesquisarOcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarOcActionPerformed
-        if (!txtPesquisarOcorrencia.getText().isEmpty()) {
-            int id_minuta = Integer.parseInt(txtPesquisarOcorrencia.getText());
-            preencherTabelaOcorrencias((DefaultTableModel) tblOcorrencias.getModel(), id_minuta);
-
-            if (tblOcorrencias.getModel().getRowCount() == 0) {
-                JOptionPane.showMessageDialog(null, "A minuta pesquisada não foi emitida " + '\n' + ""
-                        + "ou não possui ocorrências.", "INFORMAÇÃO", JOptionPane.INFORMATION_MESSAGE);
-                txtPesquisarOcorrencia.requestFocus();
-            } else {
-                btnIncluirOc.setEnabled(true);
-            }
-        }
-    }//GEN-LAST:event_btnPesquisarOcActionPerformed
-
-    private void btnPesquisarOcKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnPesquisarOcKeyPressed
-        btnPesquisarOc.doClick();
-    }//GEN-LAST:event_btnPesquisarOcKeyPressed
-
-    private void btnCancelarOcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarOcActionPerformed
-        btnIncluirOc.setEnabled(true);
-        ManipularCampos.limparCampos(Arrays.asList(txtCodOcorrencia, txtCodMinuta, txtDescricaoOc, txtDataReceb, txtNomeReceb));
-        cmbOcorrencias.setSelectedIndex(0);
-        ManipularCampos.habilitar_desabilitar(Arrays.asList(btnCancelarOc, btnSalvarOc, txtCodOcorrencia,
-                txtDataReceb, txtNomeReceb, txtDescricaoOc, cmbOcorrencias, txtCodMinuta), false);
-    }//GEN-LAST:event_btnCancelarOcActionPerformed
-
-    /**
-     * Limpa a tabela e desabilita o botão incluir quando o campo de pesquisa
-     * estiver vazio ou for limpo.
-     *
-     * @param evt
-     */
-    private void txtPesquisarOcorrenciaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisarOcorrenciaKeyPressed
-        if (txtPesquisarOcorrencia.getText().length() == 1) {
-            ((DefaultTableModel) tblOcorrencias.getModel()).setRowCount(0);
-            btnIncluirOc.setEnabled(false);
-        }
-    }//GEN-LAST:event_txtPesquisarOcorrenciaKeyPressed
-
-    private void btnIncluirOcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIncluirOcActionPerformed
-        ManipularCampos.habilitar_desabilitar(Arrays.asList(txtCodMinuta, txtCodOcorrencia, txtDescricaoOc,
-                cmbOcorrencias, txtNomeReceb, txtDataReceb,btnSalvarOc,btnCancelarOc), true);
-        btnIncluirOc.setEnabled(false);
-        txtCodMinuta.requestFocus();
-    }//GEN-LAST:event_btnIncluirOcActionPerformed
-
-    private void txtDescricaoOcKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDescricaoOcKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_TAB) {
-            btnSalvarOc.requestFocus();
-        }
-    }//GEN-LAST:event_txtDescricaoOcKeyPressed
-
-    private void btnSalvarOcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarOcActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnSalvarOcActionPerformed
-
-    private void btnSalvarOcKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnSalvarOcKeyPressed
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            btnSalvarOc.doClick();
-        }
-    }//GEN-LAST:event_btnSalvarOcKeyPressed
-
+    
     /**
      * Imprime a minuta atual, recém feita ainda em cache.
      */
@@ -2223,135 +1879,8 @@ public class FormMinuta extends javax.swing.JFrame {
         }
     }
 
-    /**
-     * Método para preencher a tabela do formPesquisar (Remententes ou
-     * Destinatários)
-     *
-     * @param modelo
-     * @param tabela
-     */
-    private void preencherTabelaRemOuDest(DefaultTableModel modelo, String sql) {
-        this.conex.connect();
-
-        try {
-            if (sql == null) {
-                sql = "SELECT ID_" + AtributosGlobais.tabela + ", NOME, CNPJ, ENDERECO "
-                        + "FROM " + AtributosGlobais.tabela + " ORDER BY 1 DESC";
-            }
-
-            ResultSet rs = this.conex.executar(sql);
-            DefaultTableModel model = modelo;
-
-            while (model.getRowCount() > 0) {
-                model.removeRow(0);
-            }
-            while (rs.next()) {
-                model.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)});
-            }
-
-            tblRemetenteOuDestinatario.getColumnModel().getColumn(0).setPreferredWidth(10);
-            tblRemetenteOuDestinatario.getColumnModel().getColumn(1).setPreferredWidth(100);
-            tblRemetenteOuDestinatario.getColumnModel().getColumn(2).setPreferredWidth(80);
-            tblRemetenteOuDestinatario.getColumnModel().getColumn(3).setPreferredWidth(180);
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            this.conex.disconnect();
-        }
-    }
-
-    /**
-     * Método preenche a tabela do formConsultarMinutas
-     *
-     * @param modelo
-     */
-    private void preencherTabelaMinutas(DefaultTableModel modelo, String sql) {
-        this.conex.connect();
-
-        try {
-            if (sql == null) {
-                sql = "SELECT M.ID_MINUTA, R.NOME, D.NOME, N.NF "
-                        + "FROM MINUTA M, NOTA_FISCAL N, REMETENTE R, DESTINATARIO D "
-                        + "WHERE M.ID_NF = N.ID_NF AND "
-                        + "M.ID_REMETENTE = R.ID_REMETENTE AND "
-                        + "M.ID_DESTINATARIO = D.ID_DESTINATARIO "
-                        + "ORDER BY 1 DESC";
-            }
-
-            ResultSet rs = this.conex.executar(sql);
-            DefaultTableModel model = modelo;
-
-            while (model.getRowCount() > 0) {
-                model.removeRow(0);
-            }
-            while (rs.next()) {
-                model.addRow(new Object[]{rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4)});
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            this.conex.disconnect();
-        }
-    }
-
-    /**
-     * Método preenche a tabela do formConsultarOcorrencias
-     *
-     * @param modelo
-     */
-    private void preencherTabelaOcorrencias(DefaultTableModel modelo, int id_minuta) {
-        this.conex.connect();
-
-        try {
-            String sql = "SELECT M.DATA_EMISSAO, N.NF, O.TIPO, O.DATA, U.LOGIN "
-                    + "FROM MINUTA M, NOTA_FISCAL N, OCORRENCIA O, USUARIO U "
-                    + "WHERE M.ID_NF = N.ID_NF AND "
-                    + "M.ID_OCORRENCIA = O.ID_OCORRENCIA AND "
-                    + "M.ID_USUARIO = U.ID_USUARIO AND "
-                    + "M.ID_MINUTA = " + id_minuta + " ORDER BY 4 DESC";
-
-            ResultSet rs = this.conex.executar(sql);
-            DefaultTableModel model = modelo;
-
-            while (model.getRowCount() > 0) {
-                model.removeRow(0);
-            }
-            while (rs.next()) {
-                model.addRow(new Object[]{new SimpleDateFormat("dd/MM/yyyy").format(rs.getDate(1)), rs.getString(2), obterOcorrencia(rs.getInt(3)),
-                    new SimpleDateFormat("dd/MM/yyyy").format(rs.getDate(4)), rs.getString(5)});
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        } finally {
-            this.conex.disconnect();
-        }
-    }
-
-    public static String obterOcorrencia(int valor) {
-        switch (valor) {
-            case 1:
-                return "ENTREGUE REALIZADA";
-            case 2:
-                return "AVARIA";
-            case 3:
-                return "CLIENTE AUSENTE";
-            case 4:
-                return "RECUSA";
-            case 5:
-                return "DEVOLUCAO";
-            case 6:
-                return "EXTRAVIO";
-            case 7:
-                return "OCORRENCIA FECHADA";
-            case 8:
-                return "FALTA DE TEMPO";
-            case 9:
-                return "OUTRAS OCORRENCIAS";
-            default:
-                return "";
-        }
-    }
-
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -2404,38 +1933,26 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnCancelar;
     private javax.swing.JButton btnCancelar2;
-    private javax.swing.JButton btnCancelarOc;
     private javax.swing.JButton btnDestinatario;
     private javax.swing.JButton btnImprimir;
     private javax.swing.JButton btnIncluir;
-    private javax.swing.JButton btnIncluirOc;
     private javax.swing.JButton btnNovo;
     private javax.swing.JButton btnPesquisar;
-    private javax.swing.JButton btnPesquisarOc;
     private javax.swing.JButton btnRemetente;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSalvar1;
-    private javax.swing.JButton btnSalvarOc;
-    private javax.swing.JComboBox<String> cmbOcorrencias;
     private javax.swing.ButtonGroup filtros;
     private javax.swing.JDialog formConsultarMinutas;
     private javax.swing.JDialog formEditarCadastrar;
-    private javax.swing.JDialog formOcorrencias;
     private javax.swing.JDialog formPesquisar;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JMenuBar jMenu;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
-    private javax.swing.JSeparator jSeparator3;
     private javax.swing.JLabel lblCEP;
     private javax.swing.JLabel lblCEP1;
     private javax.swing.JLabel lblCEP2;
@@ -2445,10 +1962,7 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JLabel lblCidade;
     private javax.swing.JLabel lblCidade1;
     private javax.swing.JLabel lblCidade2;
-    private javax.swing.JLabel lblCodMinuta;
-    private javax.swing.JLabel lblCodOcorrencia;
     private javax.swing.JLabel lblCubico;
-    private javax.swing.JLabel lblDataReceb;
     private javax.swing.JLabel lblDestinatario2;
     private javax.swing.JLabel lblEmissao;
     private javax.swing.JLabel lblEndereco;
@@ -2461,12 +1975,10 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JLabel lblMinuta;
     private javax.swing.JLabel lblNF;
     private javax.swing.JLabel lblNome;
-    private javax.swing.JLabel lblNomeReceb;
     private javax.swing.JLabel lblNumero;
     private javax.swing.JLabel lblNumero1;
     private javax.swing.JLabel lblNumero2;
     private javax.swing.JLabel lblObservacao;
-    private javax.swing.JLabel lblOcorrencias;
     private javax.swing.JLabel lblPeso;
     private javax.swing.JLabel lblPesquisar1;
     private javax.swing.JLabel lblRemetente;
@@ -2497,7 +2009,6 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JMenuItem subUsuarios;
     private javax.swing.JMenuItem sucConsultarRemetentes;
     private javax.swing.JTable tblMinutas;
-    private javax.swing.JTable tblOcorrencias;
     private javax.swing.JTable tblRemetenteOuDestinatario;
     private javax.swing.JFormattedTextField txtCEP;
     private javax.swing.JTextField txtCEP1;
@@ -2508,11 +2019,7 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JTextField txtCidade;
     private javax.swing.JTextField txtCidade1;
     private javax.swing.JTextField txtCidade2;
-    private javax.swing.JTextField txtCodMinuta;
-    private javax.swing.JTextField txtCodOcorrencia;
     private javax.swing.JFormattedTextField txtCubico;
-    private javax.swing.JFormattedTextField txtDataReceb;
-    private javax.swing.JTextArea txtDescricaoOc;
     private javax.swing.JTextField txtDestinatario;
     private javax.swing.JFormattedTextField txtEmissao;
     private javax.swing.JTextField txtEndereco;
@@ -2524,7 +2031,6 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JTextField txtMinuta;
     private javax.swing.JTextField txtNF;
     private javax.swing.JTextField txtNome;
-    private javax.swing.JTextField txtNomeReceb;
     private javax.swing.JTextField txtNumero;
     private javax.swing.JTextField txtNumero1;
     private javax.swing.JTextField txtNumero2;
@@ -2532,7 +2038,6 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JFormattedTextField txtPeso;
     private javax.swing.JTextField txtPesquisa;
     private javax.swing.JTextField txtPesquisa1;
-    private javax.swing.JTextField txtPesquisarOcorrencia;
     private javax.swing.JTextField txtRemetente;
     private javax.swing.JFormattedTextField txtTelefone;
     private javax.swing.JTextField txtTelefone1;
