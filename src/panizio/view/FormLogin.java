@@ -104,7 +104,7 @@ public class FormLogin extends javax.swing.JFrame {
 
         lblVersao.setFont(new java.awt.Font("Arial Black", 1, 10)); // NOI18N
         lblVersao.setForeground(new java.awt.Color(153, 153, 153));
-        lblVersao.setText("Versão 1.0 - 06/2018");
+        lblVersao.setText("Versão 2.2 - 07/2018");
         getContentPane().add(lblVersao);
         lblVersao.setBounds(330, 460, 140, 15);
 

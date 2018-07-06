@@ -19,7 +19,7 @@ import panizio.utils.AtributosGlobais;
 public class TabelasDAO {
     
     private ConexaoBanco conex;
-    private SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy");
+    private SimpleDateFormat formatoData = new SimpleDateFormat("dd/MM/yyyy   HH:mm:ss");
     
     public TabelasDAO() {
         this.conex = new ConexaoBanco();
@@ -112,20 +112,18 @@ public class TabelasDAO {
         this.conex.connect();
 
         try {
-            String sql = "SELECT M.DATA_EMISSAO, N.NF, O.TIPO, O.DATA, U.LOGIN "
-                    + "FROM MINUTA M, NOTA_FISCAL N, OCORRENCIA O, USUARIO U "
-                    + "WHERE M.ID_NF = N.ID_NF AND "
-                    + "M.ID_OCORRENCIA = O.ID_OCORRENCIA AND "
-                    + "M.ID_USUARIO = U.ID_USUARIO AND "
-                    + "M.ID_MINUTA = " + id_minuta + " ORDER BY 4 DESC";
+            String sql = "SELECT O.TIPO, O.DATA "
+                    + "FROM MINUTA M, OCORRENCIA O "
+                    + "WHERE M.ID_MINUTA = O.ID_MINUTA AND "
+                    + "M.ID_MINUTA = " + id_minuta + " ORDER BY 2 DESC";
 
             ResultSet rs = this.conex.executar(sql);
             DefaultTableModel model = modelo;
 
             while (model.getRowCount() > 0) model.removeRow(0);
             while (rs.next()) {
-                model.addRow(new Object[]{formatoData.format(rs.getDate(1)), rs.getString(2), obterOcorrencia(rs.getInt(3)),
-                    formatoData.format(rs.getDate(4)), rs.getString(5)});
+                String oc = obterOcorrencia(rs.getInt(1));
+                model.addRow(new Object[]{oc, formatoData.format(rs.getTimestamp(2)), AtributosGlobais.usuario.getLogin()});                
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -137,7 +135,7 @@ public class TabelasDAO {
     private String obterOcorrencia(int valor) {
         switch (valor) {
             case 1:
-                return "ENTREGUE REALIZADA";
+                return "ENTREGA REALIZADA";
             case 2:
                 return "AVARIA";
             case 3:

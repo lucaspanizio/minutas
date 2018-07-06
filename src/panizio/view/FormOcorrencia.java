@@ -4,20 +4,28 @@
  * and open the template in the editor.
  */
 package panizio.view;
+
+import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import panizio.dao.MinutaDAO;
+import panizio.dao.OcorrenciaDAO;
 import panizio.dao.TabelasDAO;
+import panizio.model.Ocorrencia;
+import panizio.utils.AtributosGlobais;
 import panizio.utils.ManipularCampos;
+
 /**
  *
  * @author lucas Panizio
  */
 public class FormOcorrencia extends javax.swing.JFrame {
+
     private static TabelasDAO tblDAO = new TabelasDAO();
-    
-    
+
     /**
      * Creates new form FormOcorrencia
      */
@@ -36,7 +44,7 @@ public class FormOcorrencia extends javax.swing.JFrame {
 
         JPanel1 = new javax.swing.JPanel();
         btnPesquisarOc = new javax.swing.JButton();
-        txtPesquisarOcorrencia = new javax.swing.JTextField();
+        txtPesquisarOc = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
         tblOcorrencias = new javax.swing.JTable();
@@ -44,8 +52,6 @@ public class FormOcorrencia extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         cmbOcorrencias = new javax.swing.JComboBox<>();
         lblOcorrencias = new javax.swing.JLabel();
-        lblDataReceb = new javax.swing.JLabel();
-        txtDataReceb = new javax.swing.JFormattedTextField();
         lblNomeReceb = new javax.swing.JLabel();
         txtNomeReceb = new javax.swing.JTextField();
         btnSalvarOc = new javax.swing.JButton();
@@ -54,8 +60,6 @@ public class FormOcorrencia extends javax.swing.JFrame {
         lblCodOcorrencia = new javax.swing.JLabel();
         txtCodOcorrencia = new javax.swing.JTextField();
         btnIncluirOc = new javax.swing.JButton();
-        lblCodMinuta = new javax.swing.JLabel();
-        txtCodMinuta = new javax.swing.JTextField();
         btnCancelarOc = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -77,9 +81,9 @@ public class FormOcorrencia extends javax.swing.JFrame {
             }
         });
 
-        txtPesquisarOcorrencia.addKeyListener(new java.awt.event.KeyAdapter() {
+        txtPesquisarOc.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtPesquisarOcorrenciaKeyPressed(evt);
+                txtPesquisarOcKeyPressed(evt);
             }
         });
 
@@ -90,13 +94,13 @@ public class FormOcorrencia extends javax.swing.JFrame {
         JPanel1Layout.setHorizontalGroup(
             JPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(JPanel1Layout.createSequentialGroup()
-                .addGap(139, 139, 139)
+                .addGap(83, 83, 83)
                 .addGroup(JPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(JPanel1Layout.createSequentialGroup()
-                        .addComponent(txtPesquisarOcorrencia, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtPesquisarOc, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnPesquisarOc))
-                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         JPanel1Layout.setVerticalGroup(
@@ -107,7 +111,7 @@ public class FormOcorrencia extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(JPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnPesquisarOc)
-                    .addComponent(txtPesquisarOcorrencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtPesquisarOc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -117,52 +121,37 @@ public class FormOcorrencia extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Emissão Minuta", "Nota Fiscal", "Ocorrência", "Data Oc.", "Usuário"
+                "Ocorrência", "Data Ocorrência", "Usuário"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false
+                false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        tblOcorrencias.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseReleased(java.awt.event.MouseEvent evt) {
-                tblOcorrenciasMouseReleased(evt);
-            }
-        });
-        tblOcorrencias.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                tblOcorrenciasKeyPressed(evt);
-            }
-        });
         jScrollPane4.setViewportView(tblOcorrencias);
 
         jPanel4.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        cmbOcorrencias.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " ", "1 - ENTREGA REALIZADA", "2 - AVARIA", "3 - CLIENTE AUSENTE", "4 - RECUSA", "5 - DEVOLUÇÃO", "6 - EXTRAVIO", "7 - OCORRENCIA FECHADA", "8 - FALTA DE TEMPO", "9 - OUTRAS OCORRENCIAS" }));
+        cmbOcorrencias.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " ", "ENTREGA REALIZADA", "AVARIA", "CLIENTE AUSENTE", "RECUSA", "DEVOLUÇÃO", "EXTRAVIO", "OCORRENCIA FECHADA", "FALTA DE TEMPO", "OUTRAS OCORRENCIAS" }));
         cmbOcorrencias.setEnabled(false);
         cmbOcorrencias.setMinimumSize(new java.awt.Dimension(50, 24));
         cmbOcorrencias.setPreferredSize(new java.awt.Dimension(50, 24));
+        cmbOcorrencias.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cmbOcorrenciasFocusLost(evt);
+            }
+        });
 
-        lblOcorrencias.setText("Ocorrências");
-
-        lblDataReceb.setText("Data do Recebimento");
-
-        try {
-            txtDataReceb.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##/##/####")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
-        txtDataReceb.setEnabled(false);
-        txtDataReceb.setMinimumSize(new java.awt.Dimension(14, 24));
-        txtDataReceb.setPreferredSize(new java.awt.Dimension(14, 24));
+        lblOcorrencias.setText("Ocorrência");
 
         lblNomeReceb.setText("Nome do Recebedor");
 
         txtNomeReceb.setEnabled(false);
+        txtNomeReceb.setNextFocusableComponent(txtDescricaoOc);
 
         btnSalvarOc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/check 22x22.png"))); // NOI18N
         btnSalvarOc.setText("SALVAR");
@@ -192,6 +181,11 @@ public class FormOcorrencia extends javax.swing.JFrame {
         lblCodOcorrencia.setText("Cód. Ocorrência");
 
         txtCodOcorrencia.setEnabled(false);
+        txtCodOcorrencia.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtCodOcorrenciaFocusLost(evt);
+            }
+        });
 
         btnIncluirOc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/add 27x27.png"))); // NOI18N
         btnIncluirOc.setText("INCLUIR");
@@ -201,10 +195,6 @@ public class FormOcorrencia extends javax.swing.JFrame {
                 btnIncluirOcActionPerformed(evt);
             }
         });
-
-        lblCodMinuta.setText("Cod. Minuta");
-
-        txtCodMinuta.setEnabled(false);
 
         btnCancelarOc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/cancel 22x22 (2).png"))); // NOI18N
         btnCancelarOc.setText("CANCELAR");
@@ -220,108 +210,81 @@ public class FormOcorrencia extends javax.swing.JFrame {
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(txtNomeReceb, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addContainerGap()
+                        .addComponent(btnIncluirOc, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnCancelarOc, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnSalvarOc, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(30, 30, 30)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jScrollPane6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 478, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addComponent(lblCodOcorrencia, javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(txtCodOcorrencia, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
-                                        .addGap(20, 20, 20)
-                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(lblOcorrencias)
-                                            .addComponent(cmbOcorrencias, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addGroup(jPanel4Layout.createSequentialGroup()
-                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(lblCodMinuta)
-                                            .addComponent(txtCodMinuta, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(18, 18, 18)
-                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                            .addComponent(lblDataReceb)
-                                            .addComponent(txtDataReceb, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addComponent(lblNomeReceb))
-                                .addGap(20, 20, 20)
-                                .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE))
+                                .addComponent(lblNomeReceb)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtNomeReceb))
                             .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(btnIncluirOc, javax.swing.GroupLayout.PREFERRED_SIZE, 114, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(lblCodOcorrencia)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtCodOcorrencia, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(lblOcorrencias)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnCancelarOc, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnSalvarOc, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(12, 12, 12))))
+                                .addComponent(cmbOcorrencias, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(32, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(btnIncluirOc, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                    .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnSalvarOc)
-                        .addComponent(btnCancelarOc)))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSalvarOc)
+                    .addComponent(btnCancelarOc)
+                    .addComponent(btnIncluirOc, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(8, 8, 8)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(lblCodMinuta)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtCodMinuta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(lblDataReceb)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtDataReceb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(lblCodOcorrencia)
-                                .addGap(4, 4, 4)
-                                .addComponent(txtCodOcorrencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(lblOcorrencias)
-                                .addGap(4, 4, 4)
-                                .addComponent(cmbOcorrencias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(18, 18, 18)
-                        .addComponent(lblNomeReceb)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNomeReceb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane6))
-                .addGap(25, 25, 25))
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblCodOcorrencia)
+                    .addComponent(txtCodOcorrencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblOcorrencias)
+                    .addComponent(cmbOcorrencias, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(14, 14, 14)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtNomeReceb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblNomeReceb))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 65, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(0, 12, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane4)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 15, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addComponent(jSeparator3)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(JPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(0, 12, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(JPanel1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 544, Short.MAX_VALUE))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(15, 15, 15))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(0, 12, Short.MAX_VALUE)
+                .addGap(0, 10, Short.MAX_VALUE)
                 .addComponent(JPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, 0)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 210, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(12, 12, 12)
-                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 270, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 12, Short.MAX_VALUE))
+                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(1, 1, 1)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 6, Short.MAX_VALUE))
         );
 
         pack();
@@ -329,41 +292,78 @@ public class FormOcorrencia extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPesquisarOcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarOcActionPerformed
-        if (!txtPesquisarOcorrencia.getText().isEmpty()) {
-            int id_minuta = Integer.parseInt(txtPesquisarOcorrencia.getText());
-            tblDAO.atualizarTblOcorrencias((DefaultTableModel) tblOcorrencias.getModel(), id_minuta);
+        if (!btnCancelarOc.isEnabled()) {
+            if (!txtPesquisarOc.getText().isEmpty()) {
+                int id_minuta = Integer.parseInt(txtPesquisarOc.getText());
+                
+                //SE A CONSULTA NO BANCO RETORNOU UMA MINUTA
+                if (new MinutaDAO().obter(id_minuta) != null) {
 
-            if (tblOcorrencias.getModel().getRowCount() == 0) {
-                JOptionPane.showMessageDialog(null, "A minuta pesquisada não foi emitida " + '\n' + ""
-                    + "ou não possui ocorrências.", "INFORMAÇÃO", JOptionPane.INFORMATION_MESSAGE);
-                txtPesquisarOcorrencia.requestFocus();
-            } else {
-                btnIncluirOc.setEnabled(true);
+                    tblDAO.atualizarTblOcorrencias((DefaultTableModel) tblOcorrencias.getModel(), id_minuta);                        
+                   // tblOcorrencias.setSelectionBackground(Color.DARK_GRAY);
+                    //tblOcorrencias.setSelectionForeground(Color.WHITE);
+
+                    txtPesquisarOc.requestFocus();
+
+                    //SE A CONSULTA NÃO RETORNOU OCORRENCIAS
+                    if (tblOcorrencias.getModel().getRowCount() == 0) {
+                        int opcao = JOptionPane.showConfirmDialog(this, "A minuta pesquisada não possui ocorrências." + '\n'
+                                + "Deseja incluir uma ocorrência?", "INCLUIR OCORRÊNCIA", JOptionPane.YES_NO_OPTION);
+
+                        if (opcao == JOptionPane.YES_OPTION) {
+                            ManipularCampos.habilitar_desabilitar(Arrays.asList(btnCancelarOc, btnSalvarOc, txtNomeReceb,
+                                    txtDescricaoOc, txtCodOcorrencia, cmbOcorrencias), true);
+                            txtCodOcorrencia.requestFocus();
+                        } else {
+                            txtPesquisarOc.requestFocus();
+                        }
+                    } else {
+                        btnIncluirOc.setEnabled(true);
+                    }
+                } 
+                //SE A CONSULTA NO BANCO NÃO RETORNOU QUALQUER MINUTA
+                else {
+                    JOptionPane.showMessageDialog(null, "A minuta pesquisada não existe.", "ATENÇÃO!", JOptionPane.WARNING_MESSAGE);
+                    txtPesquisarOc.requestFocus();
+                }
             }
         }
     }//GEN-LAST:event_btnPesquisarOcActionPerformed
 
     private void btnPesquisarOcKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnPesquisarOcKeyPressed
-        btnPesquisarOc.doClick();
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            btnPesquisarOc.doClick();
+        }
     }//GEN-LAST:event_btnPesquisarOcKeyPressed
 
-    private void txtPesquisarOcorrenciaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisarOcorrenciaKeyPressed
-        if (txtPesquisarOcorrencia.getText().length() == 1) {
+    private void txtPesquisarOcKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisarOcKeyPressed
+        if (txtPesquisarOc.getText().length() < 2) {
             ((DefaultTableModel) tblOcorrencias.getModel()).setRowCount(0);
             btnIncluirOc.setEnabled(false);
         }
-    }//GEN-LAST:event_txtPesquisarOcorrenciaKeyPressed
-
-    private void tblOcorrenciasMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblOcorrenciasMouseReleased
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tblOcorrenciasMouseReleased
-
-    private void tblOcorrenciasKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tblOcorrenciasKeyPressed
-
-    }//GEN-LAST:event_tblOcorrenciasKeyPressed
+    }//GEN-LAST:event_txtPesquisarOcKeyPressed
 
     private void btnSalvarOcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarOcActionPerformed
-        // TODO add your handling code here:
+        List<Component> camposValidar = Arrays.asList(txtNomeReceb, cmbOcorrencias);
+
+        //SE TODOS OS CAMPOS OBRIGATÓRIOS FORAM PREENCHIDOS
+        if (!ManipularCampos.camposVaziosGenerico(camposValidar)) {
+
+            int id_minuta = Integer.parseInt(txtPesquisarOc.getText());
+            Ocorrencia oc = new Ocorrencia(txtCodOcorrencia.getText(), txtDescricaoOc.getText(),
+                    txtNomeReceb.getText(), AtributosGlobais.usuario.getId(), id_minuta);
+
+            //SE A INSERÇÃO NO BANCO FOI BEM SUCEDIDA
+            if (new OcorrenciaDAO().inserir(oc)) {
+                tblDAO.atualizarTblOcorrencias((DefaultTableModel) tblOcorrencias.getModel(), id_minuta);
+                btnCancelarOcActionPerformed(evt);
+            }
+
+        } //EXISTE AO MENOS UM CAMPO OBRIGATÓRIO NÃO PREENCHIDO
+        else {
+            JOptionPane.showMessageDialog(null, "Preencha corretamente os campos.", "ATENÇÃO!", JOptionPane.WARNING_MESSAGE);
+            txtCodOcorrencia.requestFocus();
+        }
     }//GEN-LAST:event_btnSalvarOcActionPerformed
 
     private void btnSalvarOcKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnSalvarOcKeyPressed
@@ -379,19 +379,48 @@ public class FormOcorrencia extends javax.swing.JFrame {
     }//GEN-LAST:event_txtDescricaoOcKeyPressed
 
     private void btnIncluirOcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIncluirOcActionPerformed
-        ManipularCampos.habilitar_desabilitar(Arrays.asList(txtCodMinuta, txtCodOcorrencia, txtDescricaoOc,
-            cmbOcorrencias, txtNomeReceb, txtDataReceb,btnSalvarOc,btnCancelarOc), true);
-    btnIncluirOc.setEnabled(false);
-    txtCodMinuta.requestFocus();
+        //SE OCORRÊNCIA DE BAIXA AINDA NÃO FOI LANÇADA
+        if (!tblOcorrencias.getValueAt(0, 0).equals("ENTREGA REALIZADA")) {
+            ManipularCampos.habilitar_desabilitar(Arrays.asList(txtCodOcorrencia, txtDescricaoOc,
+                    cmbOcorrencias, txtNomeReceb, btnSalvarOc, btnCancelarOc), true);
+            btnIncluirOc.setEnabled(false);
+            txtPesquisarOc.setEditable(false);
+
+            txtCodOcorrencia.requestFocus();
+        } //OCORRÊNCIA DE BAIXA JÁ FOI LANÇADA
+        else {
+            JOptionPane.showMessageDialog(null, "Inclusão não permitida!" + '\n'
+                    + "A minuta já foi baixada.", "ATENÇÃO!", JOptionPane.WARNING_MESSAGE);
+            txtPesquisarOc.requestFocus();
+        }
     }//GEN-LAST:event_btnIncluirOcActionPerformed
 
     private void btnCancelarOcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarOcActionPerformed
         btnIncluirOc.setEnabled(true);
-        ManipularCampos.limparCampos(Arrays.asList(txtCodOcorrencia, txtCodMinuta, txtDescricaoOc, txtDataReceb, txtNomeReceb));
+        txtPesquisarOc.setEditable(true);
+        ManipularCampos.limparCampos(Arrays.asList(txtCodOcorrencia, txtDescricaoOc, txtNomeReceb));
         cmbOcorrencias.setSelectedIndex(0);
-        ManipularCampos.habilitar_desabilitar(Arrays.asList(btnCancelarOc, btnSalvarOc, txtCodOcorrencia,
-            txtDataReceb, txtNomeReceb, txtDescricaoOc, cmbOcorrencias, txtCodMinuta), false);
+        ManipularCampos.habilitar_desabilitar(Arrays.asList(btnCancelarOc, btnSalvarOc,
+                txtCodOcorrencia, txtNomeReceb, txtDescricaoOc, cmbOcorrencias), false);
     }//GEN-LAST:event_btnCancelarOcActionPerformed
+
+    private void txtCodOcorrenciaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCodOcorrenciaFocusLost
+        String cod = txtCodOcorrencia.getText();
+        if (Arrays.asList("01", "02", "03", "04", "05", "06", "07", "08", "09").contains(cod)) {
+            cmbOcorrencias.setSelectedIndex(Integer.parseInt(cod));
+        } else {
+            JOptionPane.showMessageDialog(this, "Código inválido.", "ATENÇÃO!", JOptionPane.WARNING_MESSAGE);
+            txtCodOcorrencia.setText(null);            
+        }
+    }//GEN-LAST:event_txtCodOcorrenciaFocusLost
+
+    private void cmbOcorrenciasFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cmbOcorrenciasFocusLost
+        int cod = cmbOcorrencias.getSelectedIndex();
+        if (cod != 0) {
+            txtCodOcorrencia.setText("0" + String.valueOf(cod));
+        }
+    }//GEN-LAST:event_cmbOcorrenciasFocusLost
+
 
     /**
      * @param args the command line arguments
@@ -440,17 +469,13 @@ public class FormOcorrencia extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JLabel lblCodMinuta;
     private javax.swing.JLabel lblCodOcorrencia;
-    private javax.swing.JLabel lblDataReceb;
     private javax.swing.JLabel lblNomeReceb;
     private javax.swing.JLabel lblOcorrencias;
     private javax.swing.JTable tblOcorrencias;
-    private javax.swing.JTextField txtCodMinuta;
     private javax.swing.JTextField txtCodOcorrencia;
-    private javax.swing.JFormattedTextField txtDataReceb;
     private javax.swing.JTextArea txtDescricaoOc;
     private javax.swing.JTextField txtNomeReceb;
-    private javax.swing.JTextField txtPesquisarOcorrencia;
+    private javax.swing.JTextField txtPesquisarOc;
     // End of variables declaration//GEN-END:variables
 }

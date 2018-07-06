@@ -14,8 +14,9 @@ public class Minuta {
     private int id_destinatario;
     private int id_remetente;    
     private String obs;
+    private String frete;
 
-    public Minuta(String emissao, String valor, int id_usuario, int id_destinatario, int id_remetente, String obs, int id_nf) {
+    public Minuta(String emissao, String valor, int id_usuario, int id_destinatario, int id_remetente, String obs, int id_nf, String frete) {
         this.id_nf = id_nf;
         this.emissao = emissao;
         this.valor  = valor;        
@@ -23,9 +24,13 @@ public class Minuta {
         this.id_destinatario = id_destinatario;
         this.id_remetente = id_remetente;
         this.obs = obs == null ? "" : obs.toUpperCase();
+        this.frete = frete;
     }
 
     public int getId_nf() { return id_nf;  }
+
+    public String getFrete() { return frete; }
+    public void setFrete(String frete) { this.frete = frete; }   
     
     public String getValor() { return valor; }
     public void setValor(String valor) { this.valor = valor; }

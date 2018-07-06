@@ -23,22 +23,24 @@ public class MinutaDAO {
 
     public boolean inserir(Minuta model) {
         this.conex.connect();
-        String sql = "INSERT INTO MINUTA VALUES(SEQ_MINUTA.NEXTVAL, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO MINUTA VALUES(SEQ_MINUTA.NEXTVAL, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try {
-            PreparedStatement pst = this.conex.c.prepareStatement(sql);
+            PreparedStatement pst = this.conex.getConnection().prepareStatement(sql);
             
             pst.setString(1, model.getEmissao());
             pst.setInt(2, model.getId_usuario());
             pst.setInt(3, model.getId_remetente());
             pst.setInt(4, model.getId_destinatario());
-            pst.setString(5, model.getObs());
+            pst.setString(5, model.getObs()); 
             pst.setString(6, model.getValor());
-            pst.setInt(7, model.getId_nf());
+            pst.setInt(7, model.getId_nf());   
+            pst.setString(8, model.getFrete());
 
             return pst.executeUpdate() > 0;
 
         } catch (SQLException ex) {
+            ex.printStackTrace();
             JOptionPane.showMessageDialog(null, "Erro ao inserir minuta: \n" + ex, "ERRO", JOptionPane.ERROR_MESSAGE);
         } finally {
             this.conex.disconnect();
@@ -51,15 +53,16 @@ public class MinutaDAO {
        
         try {
             String sql = "SELECT * FROM MINUTA WHERE ID_MINUTA = " + id_minuta;
-            Statement pst = this.conex.c.createStatement();
+            Statement pst = this.conex.getConnection().createStatement();
             ResultSet rs = pst.executeQuery(sql);
 
             while (rs.next()) {
                 SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-                String emissao = formato.format(rs.getDate("data_emissao"));
-                Minuta min = new Minuta(emissao,rs.getString("valor"), rs.getInt("id_usuario"), rs.getInt("id_destinatario"),
-                        rs.getInt("id_remetente"), rs.getString("obs"), rs.getInt("id_nf"));
-                min.setId(rs.getInt("id_minuta"));
+                String emissao = formato.format(rs.getDate("DATA_EMISSAO"));
+                Minuta min = new Minuta(emissao,rs.getString("VALOR"), rs.getInt("ID_USUARIO"), rs.getInt("ID_DESTINATARIO"),
+                        rs.getInt("ID_REMETENTE"), rs.getString("OBS"), rs.getInt("ID_NF"), rs.getString("FRETE"));
+                min.setId(id_minuta);
+               
                 return min;
             }
 

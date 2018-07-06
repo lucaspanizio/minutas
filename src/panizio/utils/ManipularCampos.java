@@ -2,16 +2,17 @@ package panizio.utils;
 
 import panizio.dao.UsuarioDAO;
 import panizio.model.Usuario;
-import panizio.utils.tipocampo.TeclasAlfabeto;
+import panizio.utils.tipocampo.TeclasNaoNumericas;
 import panizio.utils.tipocampo.TeclasNumericas;
-import panizio.utils.tipocampo.TeclasNumericasVirgulas;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.text.DefaultStyledDocument;
+import panizio.utils.tipocampo.TeclasNumericasVirgulas;
 
 public class ManipularCampos {
 
@@ -68,32 +69,42 @@ public class ManipularCampos {
      * @param campos - lista de campos para validar
      * @return true se não houver campos em branco, false se houver
      */
-//    public static boolean camposVaziosGenerico(List<Component> campos){ 
-//       
-//       for(Component c : campos){
-//            if (c instanceof JFormattedTextField) {
-//                if(((JFormattedTextField) c).getValue() == null) {
-//                    return true;
-//                }  
-//            } else if (c instanceof JTextField){
-//                if(((JTextField) c).getText().equals("")) {               
-//                    return true;
-//                }
+    public static boolean camposVaziosGenerico(List<Component> campos) {
+
+        for (Component c : campos) {
+            if (c instanceof JFormattedTextField) {
+                if (((JFormattedTextField) c).getValue() == null) {
+                    return true;
+                }
+            } else if (c instanceof JTextField) {
+                if (((JTextField) c).getText().isEmpty()) {
+                    return true;
+                }
+            } else if (c instanceof JTextArea) {
+                if (((JTextArea) c).getText().isEmpty()) {
+                    return true;
+                }
+            } else if (c instanceof JComboBox) {
+                if (((JComboBox) c).getSelectedIndex() == 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+//    /**
+//     * Seta default no formato do texto (teclas aceitas).
+//     *
+//     * @param List<JTextField> - campos a serem setados com formatação padrão.
+//     */
+//    public static void formatarCampoDefault(List<Component> campos) {
+//        for (Component txt : campos) {
+//            if (txt instanceof JTextField) {
+//                ((JTextField) txt).setDocument(new DefaultStyledDocument());
 //            }
 //        }
-//       return false;
 //    }
-    /**
-     * Seta default no formato do texto (teclas aceitas).
-     *
-     * @param List<JTextField> - campos a serem setados com formatação padrão.
-     */
-    public static void formatarCamposDefault(List<Component> campos) {
-        for (Component txt : campos) {
-            if(txt instanceof JTextField)
-               ((JTextField)txt).setDocument(new DefaultStyledDocument());
-        }
-    }
 
     /**
      * Defini que o campo somente permitirá teclas alfabéticas (letras).
@@ -101,8 +112,8 @@ public class ManipularCampos {
      * @param JTextField - campo a ser formatado.
      * @param int - quantidade de teclas permitidas.
      */
-    public static void formatarCampoAlfabeto(JTextField txt, int tamanho) {
-        txt.setDocument(new TeclasAlfabeto(tamanho));
+    public static void formatarCampoNaoNumerico(JTextField txt, int tamanho) {
+        txt.setDocument(new TeclasNaoNumericas(tamanho));
     }
 
     /**
@@ -132,13 +143,16 @@ public class ManipularCampos {
      * @param text - lista de campos a serem limpos.
      */
     public static void limparCampos(List<Component> text) {
-        for (Component c : text) {
-            if (c instanceof JFormattedTextField) {
+        for (Component c : text) {            
+            if (c instanceof JFormattedTextField) {                 
                 ((JFormattedTextField) c).setText(null);
             } else if (c instanceof JTextArea) {
                 ((JTextArea) c).setText(null);
             } else if (c instanceof JTextField) {
+                ((JTextField) c).setDocument(new DefaultStyledDocument());
                 ((JTextField) c).setText(null);
+            } else if (c instanceof JComboBox){
+                ((JComboBox) c).setSelectedIndex(0);
             }
         }
     }
@@ -153,6 +167,31 @@ public class ManipularCampos {
     public static void habilitar_desabilitar(List<Component> cpnt, boolean flag) {
         for (Component c : cpnt) {
             c.setEnabled(flag);
+        }
+    }
+
+    public static String obterOcorrencia(String valor) {
+        switch (valor) {
+            case "01":
+                return "ENTREGA REALIZADA";
+            case "02":
+                return "AVARIA";
+            case "03":
+                return "CLIENTE AUSENTE";
+            case "04":
+                return "RECUSA";
+            case "05":
+                return "DEVOLUCAO";
+            case "06":
+                return "EXTRAVIO";
+            case "07":
+                return "OCORRENCIA FECHADA";
+            case "08":
+                return "FALTA DE TEMPO";
+            case "09":
+                return "OUTRAS OCORRENCIAS";
+            default:
+                return "";
         }
     }
 

@@ -31,6 +31,7 @@ import net.sf.jasperreports.view.JasperViewer;
 import panizio.dao.TabelasDAO;
 import panizio.dao.UsuarioDAO;
 import panizio.model.Usuario;
+import panizio.utils.Mensagens;
 
 /**
  *
@@ -44,10 +45,9 @@ public class FormMinuta extends javax.swing.JFrame {
     private static RemetenteDAO remDAO = new RemetenteDAO();
     private static DestinatarioDAO destDAO = new DestinatarioDAO();
     private static TabelasDAO tblDAO = new TabelasDAO();
-    
+
     public FormMinuta() {
-        initComponents();
-        this.setLocationRelativeTo(null);
+        initComponents();        
         this.conex = new ConexaoBanco();
     }
 
@@ -66,7 +66,7 @@ public class FormMinuta extends javax.swing.JFrame {
         Remetente1 = new javax.swing.JPanel();
         lblNome = new javax.swing.JLabel();
         txtNome = new javax.swing.JTextField();
-        lblCNPJ = new javax.swing.JLabel();
+        lblDocumento = new javax.swing.JLabel();
         lblEndereco = new javax.swing.JLabel();
         txtEndereco = new javax.swing.JTextField();
         lblNumero = new javax.swing.JLabel();
@@ -77,9 +77,9 @@ public class FormMinuta extends javax.swing.JFrame {
         lblEstado = new javax.swing.JLabel();
         txtEstado = new javax.swing.JTextField();
         lblTelefone = new javax.swing.JLabel();
-        txtTelefone = new javax.swing.JFormattedTextField();
-        txtCNPJ = new javax.swing.JFormattedTextField();
         txtCEP = new javax.swing.JFormattedTextField();
+        txtDocumento = new javax.swing.JTextField();
+        txtTelefone = new javax.swing.JTextField();
         formConsultarMinutas = new javax.swing.JDialog();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblMinutas = new javax.swing.JTable();
@@ -159,6 +159,7 @@ public class FormMinuta extends javax.swing.JFrame {
         txtValorNF = new javax.swing.JFormattedTextField();
         txtPeso = new javax.swing.JFormattedTextField();
         txtCubico = new javax.swing.JFormattedTextField();
+        cmbFrete = new javax.swing.JComboBox<>();
         Observação = new javax.swing.JPanel();
         lblObservacao = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -185,6 +186,7 @@ public class FormMinuta extends javax.swing.JFrame {
         formEditarCadastrar.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         formEditarCadastrar.setMinimumSize(new java.awt.Dimension(520, 323));
         formEditarCadastrar.setModal(true);
+        formEditarCadastrar.setResizable(false);
         formEditarCadastrar.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         btnSalvar1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/panizio/imagens/check 22x22.png"))); // NOI18N
@@ -218,7 +220,7 @@ public class FormMinuta extends javax.swing.JFrame {
 
         txtNome.setNextFocusableComponent(txtEndereco);
 
-        lblCNPJ.setText("CNPJ");
+        lblDocumento.setText("CNPJ/ CPF");
 
         lblEndereco.setText("Endereço");
 
@@ -241,25 +243,11 @@ public class FormMinuta extends javax.swing.JFrame {
         lblTelefone.setText("Telefone");
 
         try {
-            txtTelefone.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("(##) ####-####")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
-        txtTelefone.setNextFocusableComponent(btnSalvar1);
-
-        try {
-            txtCNPJ.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("##.###.###/####-##")));
-        } catch (java.text.ParseException ex) {
-            ex.printStackTrace();
-        }
-        txtCNPJ.setNextFocusableComponent(txtTelefone);
-
-        try {
             txtCEP.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.MaskFormatter("#####-###")));
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
-        txtCEP.setNextFocusableComponent(txtCNPJ);
+        txtCEP.setNextFocusableComponent(txtDocumento);
 
         javax.swing.GroupLayout Remetente1Layout = new javax.swing.GroupLayout(Remetente1);
         Remetente1.setLayout(Remetente1Layout);
@@ -268,35 +256,34 @@ public class FormMinuta extends javax.swing.JFrame {
             .addGroup(Remetente1Layout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addGroup(Remetente1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblCNPJ)
+                    .addComponent(lblDocumento)
                     .addComponent(lblEndereco)
                     .addComponent(lblCidade)
                     .addComponent(lblNome)
                     .addComponent(lblNumero))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(Remetente1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(Remetente1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(txtNome, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtEndereco)
-                        .addGroup(Remetente1Layout.createSequentialGroup()
-                            .addComponent(txtCidade, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                            .addComponent(lblEstado)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(Remetente1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtNome, javax.swing.GroupLayout.DEFAULT_SIZE, 360, Short.MAX_VALUE)
+                    .addGroup(Remetente1Layout.createSequentialGroup()
+                        .addComponent(txtCidade, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(lblEstado)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(Remetente1Layout.createSequentialGroup()
+                        .addComponent(txtDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 138, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(27, 27, 27)
+                        .addComponent(lblTelefone)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(Remetente1Layout.createSequentialGroup()
                         .addComponent(txtNumero, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(lblCEP)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtCEP, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(Remetente1Layout.createSequentialGroup()
-                        .addComponent(txtCNPJ, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(lblTelefone)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(txtTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(27, Short.MAX_VALUE))
+                    .addComponent(txtEndereco))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         Remetente1Layout.setVerticalGroup(
             Remetente1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -329,8 +316,8 @@ public class FormMinuta extends javax.swing.JFrame {
                         .addComponent(lblTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txtTelefone, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(Remetente1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(lblCNPJ, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtCNPJ, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(lblDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtDocumento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(32, Short.MAX_VALUE))
         );
 
@@ -340,6 +327,7 @@ public class FormMinuta extends javax.swing.JFrame {
         formConsultarMinutas.setTitle("Consultar Minutas");
         formConsultarMinutas.setMinimumSize(new java.awt.Dimension(607, 472));
         formConsultarMinutas.setModal(true);
+        formConsultarMinutas.setResizable(false);
         formConsultarMinutas.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         tblMinutas.setModel(new javax.swing.table.DefaultTableModel(
@@ -391,7 +379,7 @@ public class FormMinuta extends javax.swing.JFrame {
 
         jLabel1.setText("Selecione um filtro para pesquisar:");
 
-        txtPesquisa1.setNextFocusableComponent(tblMinutas);
+        txtPesquisa1.setNextFocusableComponent(btnPesquisar);
         txtPesquisa1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 txtPesquisa1KeyPressed(evt);
@@ -403,6 +391,11 @@ public class FormMinuta extends javax.swing.JFrame {
         btnPesquisar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnPesquisarActionPerformed(evt);
+            }
+        });
+        btnPesquisar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                btnPesquisarKeyPressed(evt);
             }
         });
 
@@ -717,6 +710,7 @@ public class FormMinuta extends javax.swing.JFrame {
 
         lblDestinatario2.setText("Destinatário");
 
+        txtCidade2.setEditable(false);
         txtCidade2.setEnabled(false);
         txtCidade2.setNextFocusableComponent(txtEstado2);
 
@@ -890,7 +884,7 @@ public class FormMinuta extends javax.swing.JFrame {
 
         txtValorMinuta.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("###0.00"))));
         txtValorMinuta.setEnabled(false);
-        txtValorMinuta.setNextFocusableComponent(txtRemetente);
+        txtValorMinuta.setNextFocusableComponent(cmbFrete);
         txtValorMinuta.setPreferredSize(new java.awt.Dimension(14, 24));
 
         txtValorNF.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("#######0.00"))));
@@ -907,6 +901,15 @@ public class FormMinuta extends javax.swing.JFrame {
         txtCubico.setEnabled(false);
         txtCubico.setNextFocusableComponent(txtValorMinuta);
         txtCubico.setPreferredSize(new java.awt.Dimension(14, 24));
+
+        cmbFrete.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { " ", "PAGO", "A PAGAR" }));
+        cmbFrete.setEnabled(false);
+        cmbFrete.setNextFocusableComponent(txtRemetente);
+        cmbFrete.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                cmbFreteKeyReleased(evt);
+            }
+        });
 
         javax.swing.GroupLayout IdentificaçãoLayout = new javax.swing.GroupLayout(Identificação);
         Identificação.setLayout(IdentificaçãoLayout);
@@ -943,23 +946,26 @@ public class FormMinuta extends javax.swing.JFrame {
                             .addComponent(txtCubico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtVolumes, javax.swing.GroupLayout.DEFAULT_SIZE, 62, Short.MAX_VALUE))))
                 .addGap(42, 42, 42)
-                .addGroup(IdentificaçãoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(IdentificaçãoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(IdentificaçãoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, IdentificaçãoLayout.createSequentialGroup()
+                            .addComponent(lblMinuta)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txtMinuta, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                            .addComponent(lblEmissao)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txtEmissao, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(IdentificaçãoLayout.createSequentialGroup()
+                            .addComponent(lblUsuario)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(IdentificaçãoLayout.createSequentialGroup()
-                        .addComponent(lblEmissao)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtEmissao, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(IdentificaçãoLayout.createSequentialGroup()
-                        .addComponent(lblMinuta)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtMinuta, javax.swing.GroupLayout.PREFERRED_SIZE, 55, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(lblValorMinuta)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtValorMinuta, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(IdentificaçãoLayout.createSequentialGroup()
-                        .addComponent(lblUsuario)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(txtValorMinuta, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(cmbFrete, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(13, 13, 13))
         );
         IdentificaçãoLayout.setVerticalGroup(
@@ -976,21 +982,22 @@ public class FormMinuta extends javax.swing.JFrame {
                     .addComponent(lblVolumes, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtVolumes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblValorNF, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtValorNF, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblMinuta)
+                    .addComponent(txtMinuta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblEmissao)
-                    .addComponent(txtEmissao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtValorNF, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(txtEmissao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(IdentificaçãoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtValorMinuta, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblValorMinuta, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(IdentificaçãoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(lblCubico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(lblPeso, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(lblValorMinuta, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblMinuta)
-                        .addComponent(txtMinuta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txtPeso, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(txtCubico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(17, 17, 17))
+                        .addComponent(txtCubico, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cmbFrete, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(16, 16, 16))
         );
 
         Observação.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -1209,6 +1216,7 @@ public class FormMinuta extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowActivated(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowActivated
@@ -1226,106 +1234,16 @@ public class FormMinuta extends javax.swing.JFrame {
         TransicaoTelas.trocar(this, new FormLogin());
     }//GEN-LAST:event_menuSairMouseClicked
 
-    private void formatarCamposMinuta() {
-        ManipularCampos.formatarCampoNumericasVirgulas(txtNF, 33);
-        ManipularCampos.formatarCampoNumerico(txtVolumes, 7);
-    }
-
-    private void formatarCamposPesquisa() {
-        ManipularCampos.formatarCampoAlfabeto(txtCidade, 30);
-        ManipularCampos.formatarCampoAlfabeto(txtEstado, 2);
-        ManipularCampos.formatarCampoNumerico(txtNumero, 6);
-    }
-
-
     private void btnIncluirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIncluirActionPerformed
-        if (!txtNF.getText().isEmpty()) {
-            ManipularCampos.limparCampos(Arrays.asList(txtNF, txtMinuta, txtValorNF, txtValorMinuta, txtPeso, txtVolumes, txtCubico,
-                    txtEmissao, txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtTelefone1, txtCEP1, txtCidade1,
-                    txtEstado1, txtDestinatario, txtCNPJ2, txtEndereco2, txtNumero2, txtTelefone2, txtCEP2, txtCidade2, txtEstado2,
-                    txtObservacao));
-        }
-        btnIncluir.setEnabled(false);
-        btnImprimir.setEnabled(false);
-
-        ManipularCampos.habilitar_desabilitar(Arrays.asList(txtNF, txtValorNF, txtValorMinuta, txtPeso, txtVolumes,
-                txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtTelefone1, txtCEP1, txtCubico,
-                txtCidade1, txtEstado1, txtDestinatario, txtCNPJ2, txtEndereco2, txtNumero2, txtTelefone2, txtCEP2,
-                txtCidade2, txtEstado2, txtObservacao, btnCancelar, btnSalvar, btnRemetente, btnDestinatario), true);
-
-        formatarCamposMinuta();
-
-        txtNF.requestFocus();
-        txtEmissao.setText(java.text.DateFormat.getDateInstance(DateFormat.SHORT).format(new Date()));
-        //txtHora.setText(new SimpleDateFormat("kk:mm").format(new Date()));
-        txtMinuta.setText(String.valueOf(AtributosGlobais.minutaAtual));
-
+        incluirMinuta();
     }//GEN-LAST:event_btnIncluirActionPerformed
-
-    /**
-     * Botão CANCELAR do FormMinuta. Limpa todos os campos e desabilita todos os
-     * campos e botões, e habilita o botão incluir.
-     *
-     * @param evt
-     */
+   
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        List<Component> camposLimpar = Arrays.asList(txtNF, txtMinuta, txtValorNF, txtValorMinuta, txtPeso, txtVolumes, txtCubico,
-                txtEmissao, txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtTelefone1, txtCEP1, txtCidade1,
-                txtEstado1, txtDestinatario, txtCNPJ2, txtEndereco2, txtNumero2, txtTelefone2, txtCEP2, txtCidade2, txtEstado2,
-                txtObservacao);
-
-        ManipularCampos.formatarCamposDefault(Arrays.asList(txtNF, txtVolumes, txtNumero));
-        ManipularCampos.limparCampos(camposLimpar);
-
-        btnIncluir.setEnabled(true);
-
-        List<Component> camposDesabilitar = Arrays.asList(txtNF, txtValorNF, txtPeso, txtVolumes, txtCubico,
-                txtEmissao, txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtTelefone1, txtValorMinuta,
-                txtCEP1, txtCidade1, txtEstado1, txtDestinatario, txtCNPJ2, txtEndereco2, txtNumero2, txtTelefone2,
-                txtCEP2, txtCidade2, txtEstado2, txtObservacao, btnCancelar, btnRemetente, btnDestinatario,
-                btnSalvar);
-        ManipularCampos.habilitar_desabilitar(camposDesabilitar, false);
-
-        txtNF.requestFocus(true);
+        cancelarMinuta();
     }//GEN-LAST:event_btnCancelarActionPerformed
-
-    /**
-     * Botão SALVAR do FormMinuta (tela principal) que desencadeia uma série de
-     * inserts no banco em suas respectivas tabelas.
-     *
-     * @param evt
-     */
+    
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
-        List<JTextField> campos = Arrays.asList(txtNF, txtValorNF, txtPeso, txtVolumes,
-                txtEmissao, txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtCEP1, txtCidade1,
-                txtEstado1, txtDestinatario, txtCNPJ2, txtEndereco2, txtTelefone2, txtCEP2, txtCidade2, txtEstado2);
-
-        //Todos os campos obrigatórios foram preenchidos
-        if (!ManipularCampos.camposVazios(campos)) {
-
-            Nota_Fiscal nf = new Nota_Fiscal(Integer.parseInt(txtVolumes.getText()), txtCubico.getText(),
-                    txtPeso.getText(), txtValorNF.getText(), txtNF.getText());
-            if (this.nfDAO.inserir(nf)) {
-
-                Minuta min = new Minuta(txtEmissao.getText(), txtValorNF.getText(), AtributosGlobais.usuario.getId(), AtributosGlobais.ID_DESTINATARIO,
-                        AtributosGlobais.ID_REMETENTE, txtObservacao.getText(), AtributosGlobais.ID_NF);
-                min.setId(Integer.parseInt(txtMinuta.getText()));
-
-                if (this.minDAO.inserir(min)) {
-                    btnImprimir.setEnabled(true);
-                    btnIncluir.setEnabled(true);
-                    ManipularCampos.habilitar_desabilitar(Arrays.asList(txtNF, txtValorNF, txtValorMinuta, txtPeso, txtVolumes,
-                            txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtTelefone1, txtCEP1, txtCubico,
-                            txtCidade1, txtEstado1, txtDestinatario, txtCNPJ2, txtEndereco2, txtNumero2, txtTelefone2, txtCEP2,
-                            txtCidade2, txtEstado2, txtObservacao, btnCancelar, btnSalvar, btnRemetente, btnDestinatario), false);
-                    AtributosGlobais.minutaAtual = Integer.parseInt(txtMinuta.getText());
-                }
-            }
-        } //Um ou mais campos obrigatórios não foram preenchidos
-        else {
-            JOptionPane.showMessageDialog(null, "Verifique se os campos foram preenchidos corretamente.", "ATENÇÃO!", JOptionPane.WARNING_MESSAGE);
-            txtNF.requestFocus(true);
-        }
+        salvarMinuta();
     }//GEN-LAST:event_btnSalvarActionPerformed
 
     /**
@@ -1377,98 +1295,16 @@ public class FormMinuta extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtDestinatarioKeyPressed
 
-    /**
-     * Botão SALVAR do formCadastrar (Remetentes ou Destinatários)
-     *
-     * @param evt
-     */
     private void btnSalvar1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvar1ActionPerformed
-        salvarRemetenteDestinatario();
-        ManipularCampos.formatarCamposDefault(Arrays.asList(txtNumero));
-        ManipularCampos.limparCampos(Arrays.asList(txtNome, txtEndereco, txtCNPJ, txtTelefone, txtCEP, txtNumero, txtCidade, txtEstado));
+        salvarRemetenteDestinatario();           
     }//GEN-LAST:event_btnSalvar1ActionPerformed
-
-    private void salvarRemetenteDestinatario() {
-        List<JTextField> campos = Arrays.asList(txtNome, txtCEP, txtCNPJ, txtCidade, txtEndereco, txtEstado, txtNumero);
-        if (!ManipularCampos.camposVazios(campos)) {
-
-            if (formEditarCadastrar.getTitle().equals("Cadastrar Remetente")) {
-                Remetente rem = new Remetente(txtEndereco.getText(), Integer.parseInt(txtNumero.getText()),
-                        txtNome.getText(), txtCNPJ.getText(), txtCidade.getText(), txtEstado.getText(), txtTelefone.getText(),
-                        txtCEP.getText());
-                rem.setId(AtributosGlobais.ID_REMETENTE);
-                if (!this.remDAO.inserir(rem)) {
-                    JOptionPane.showMessageDialog(null, "12 - Não foi possível cadastrar o remetente.", "ERRO", JOptionPane.ERROR_MESSAGE);
-                }
-
-            } else if (formEditarCadastrar.getTitle().equals("Cadastrar Destinatario")) {
-                Destinatario dest = new Destinatario(txtEndereco.getText(), Integer.parseInt(txtNumero.getText()),
-                        txtNome.getText(), txtCNPJ.getText(), txtCidade.getText(), txtEstado.getText(), txtTelefone.getText(), txtCEP.getText());
-                dest.setId(AtributosGlobais.ID_DESTINATARIO);
-                if (!this.destDAO.inserir(dest)) {
-                    JOptionPane.showMessageDialog(null, "13 - Não foi possível cadastrar o destinatário.", "ERRO", JOptionPane.ERROR_MESSAGE);
-                }
-
-            } else if (formEditarCadastrar.getTitle().equals("Editar Remetente")) {
-                Remetente rem = new Remetente(txtEndereco.getText(), Integer.parseInt(txtNumero.getText()),
-                        txtNome.getText(), txtCNPJ.getText(), txtCidade.getText(), txtEstado.getText(), txtTelefone.getText(),
-                        txtCEP.getText());
-                rem.setId(AtributosGlobais.ID_REMETENTE);
-                if (!this.remDAO.alterar(rem)) {
-                    JOptionPane.showMessageDialog(null, "14 - Não foi possível alterar o remetente.", "ERRO", JOptionPane.ERROR_MESSAGE);
-                }
-            } else if (formEditarCadastrar.getTitle().equals("Editar Destinatario")) {
-                Destinatario dest = new Destinatario(txtEndereco.getText(), Integer.parseInt(txtNumero.getText()),
-                        txtNome.getText(), txtCNPJ.getText(), txtCidade.getText(), txtEstado.getText(), txtTelefone.getText(), txtCEP.getText());
-                dest.setId(AtributosGlobais.ID_DESTINATARIO);
-                if (!this.destDAO.alterar(dest)) {
-                    JOptionPane.showMessageDialog(null, "15 - Não foi possível alterar o destinatário.", "ERRO", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-            tblDAO.atualizarTblRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
-            formEditarCadastrar.dispose();
-        } else {
-            JOptionPane.showMessageDialog(null, "Verifique se os campos foram preenchidos corretamente.", "Atenção", JOptionPane.WARNING_MESSAGE);
-            txtNome.requestFocus(true);
-        }
-    }
-
-    /**
-     * Botão CANCELAR do formCadastrar (Remententes ou Destinatários)
-     *
-     * @param evt
-     */
+  
     private void btnCancelar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar2ActionPerformed
-        List<Component> camposLimpar = Arrays.asList(txtNome, txtEndereco, txtCidade, txtEstado, txtNumero, txtTelefone, txtCEP, txtCNPJ);
-
-        ManipularCampos.limparCampos(camposLimpar);
-        formatarCamposPesquisa();
-        txtNome.requestFocus();
+        cancelarCadastroEdicao();
     }//GEN-LAST:event_btnCancelar2ActionPerformed
 
-    /**
-     * Botão CANCELAR do formConsultar (Minutas)
-     *
-     * @param evt
-     */
     private void btnPesquisarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarActionPerformed
-        if (!txtPesquisa1.getText().isEmpty()) {
-            if (filtros.getSelection() != null) {
-                Object filtro = filtros.getSelection().getActionCommand();
-
-                if (filtros.getSelection() == radioNumero) {
-                    filtro = Integer.parseInt(filtros.getSelection().getActionCommand());
-                }
-
-                String sql = "SELECT M.ID_MINUTA, R.NOME, D.NOME, N.NF "
-                        + "FROM MINUTA M, REMETENTE R, DESTINATARIO D, NOTA_FISCAL N "
-                        + "WHERE M.ID_NF = N.ID_NF AND M.ID_REMETENTE = R.ID_REMETENTE AND "
-                        + "M.ID_DESTINATARIO = D.ID_DESTINATARIO AND " + filtro + " LIKE '"
-                        + txtPesquisa1.getText().toUpperCase() + "%' ORDER BY 1 DESC";
-
-                tblDAO.atualizarTblMinutas((DefaultTableModel) tblMinutas.getModel(), sql);
-            }
-        }
+        cancelarConsulta();
     }//GEN-LAST:event_btnPesquisarActionPerformed
 
     /**
@@ -1477,7 +1313,7 @@ public class FormMinuta extends javax.swing.JFrame {
      * @param evt
      */
     private void btnNovoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoActionPerformed
-        formatarCamposPesquisa();
+        formatarCamposCadastroEdicao();
         TransicaoTelas.abrirComTitulo(formEditarCadastrar, "Cadastrar " + AtributosGlobais.tabela);
         txtNome.requestFocus();
     }//GEN-LAST:event_btnNovoActionPerformed
@@ -1493,55 +1329,8 @@ public class FormMinuta extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCancelActionPerformed
 
     private void popVisualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_popVisualizarActionPerformed
-        int id_minuta = (int) tblMinutas.getValueAt(tblMinutas.getSelectedRow(), 0);
-
-        Minuta minuta = this.minDAO.obter(id_minuta);
-        Remetente remetente = this.remDAO.obter(minuta.getId_remetente());
-        Destinatario destinatario = this.destDAO.obter(minuta.getId_destinatario());
-        Nota_Fiscal nf = this.nfDAO.obter(minuta.getId_nf());
-        Usuario usuario = new UsuarioDAO().obter(minuta.getId_usuario());
-
-        Map<String, Object> parametrosRelatorio = new HashMap<>();
-        //PRIMEIRO PAINEL - DADOS NOTA E MINUTA
-        //variavel ireport, campo java
-        parametrosRelatorio.put("notas", nf.getNf());
-        parametrosRelatorio.put("nf_valor", nf.getValor());
-        parametrosRelatorio.put("peso", nf.getPeso());
-        parametrosRelatorio.put("vol", nf.getQtdVolumes());
-
-        parametrosRelatorio.put("cub", nf.getMetCubicos());
-        parametrosRelatorio.put("nome_usuario", usuario.getLogin());
-        parametrosRelatorio.put("id_minuta", minuta.getId());
-        System.out.println(minuta.getId());
-        parametrosRelatorio.put("emissao", minuta.getEmissao());
-        System.out.println(minuta.getEmissao());
-        parametrosRelatorio.put("minuta_valor", minuta.getValor());
-
-        //SEGUNDO PAINEL - DADOS DO REMETENTE
-        parametrosRelatorio.put("rem_razao", remetente.getNome());
-        parametrosRelatorio.put("rem_endereco", remetente.getEndereco());
-        parametrosRelatorio.put("rem_cep", remetente.getCep());
-        parametrosRelatorio.put("rem_telefone", remetente.getTelefone().isEmpty() ? " " : remetente.getTelefone());
-        parametrosRelatorio.put("rem_cnpj", remetente.getCnpj());
-        parametrosRelatorio.put("rem_cidade", remetente.getCidade());
-        parametrosRelatorio.put("rem_estado", remetente.getEstado());
-        parametrosRelatorio.put("rem_numero", remetente.getNumero());
-
-        //TERCEIRO PAINEL - DADOS DO DESTINATARIO
-        parametrosRelatorio.put("dest_razao", destinatario.getNome());
-        parametrosRelatorio.put("dest_endereco", destinatario.getEndereco());
-        parametrosRelatorio.put("dest_cep", destinatario.getCep());
-        parametrosRelatorio.put("dest_telefone", destinatario.getTelefone().isEmpty() ? " " : destinatario.getTelefone());
-        parametrosRelatorio.put("dest_cnpj", destinatario.getCnpj());
-        parametrosRelatorio.put("dest_cidade", destinatario.getCidade());
-        parametrosRelatorio.put("dest_estado", destinatario.getEstado());
-        parametrosRelatorio.put("dest_numero", destinatario.getNumero());
-
-        //QUARTO PAINEL - OBSERVAÇÃO
-        parametrosRelatorio.put("obs", minuta.getObs().isEmpty() ? " " : minuta.getObs());
-
-        formConsultarMinutas.dispose();
-        imprimirMinuta(parametrosRelatorio, (int) parametrosRelatorio.get("id_minuta"));
+        Map parametros = carregarDocumento();
+        imprimirMinuta(parametros, (int) parametros.get("id_minuta"));
     }//GEN-LAST:event_popVisualizarActionPerformed
 
     /**
@@ -1569,10 +1358,12 @@ public class FormMinuta extends javax.swing.JFrame {
             if (evt.getClickCount() == 2) {
                 if (formPesquisar.getTitle().equals("Consultar Remetente")) {
                     AtributosGlobais.ID_REMETENTE = (int) tblRemetenteOuDestinatario.getValueAt(tblRemetenteOuDestinatario.getSelectedRow(), 0);
-                    setPesquisa(AtributosGlobais.ID_REMETENTE);
+                    importarRemOuDest(AtributosGlobais.ID_REMETENTE);
+                    txtDestinatario.requestFocus();
                 } else {
                     AtributosGlobais.ID_DESTINATARIO = (int) tblRemetenteOuDestinatario.getValueAt(tblRemetenteOuDestinatario.getSelectedRow(), 0);
-                    setPesquisa(AtributosGlobais.ID_DESTINATARIO);
+                    importarRemOuDest(AtributosGlobais.ID_DESTINATARIO);
+                    txtRemetente.requestFocus();
                 }
                 txtPesquisa.setText(null);
                 formPesquisar.dispose();
@@ -1632,7 +1423,7 @@ public class FormMinuta extends javax.swing.JFrame {
             txtEndereco.setText(rem.getEndereco());
             txtNumero.setText(String.valueOf(rem.getNumero()));
             txtNome.setText(rem.getNome());
-            txtCNPJ.setText(rem.getCnpj());
+            txtDocumento.setText(rem.getCnpj());
             txtCidade.setText(rem.getCidade());
             txtEstado.setText(rem.getEstado());
             txtTelefone.setText(rem.getTelefone());
@@ -1643,12 +1434,13 @@ public class FormMinuta extends javax.swing.JFrame {
             txtEndereco.setText(dest.getEndereco());
             txtNumero.setText(String.valueOf(dest.getNumero()));
             txtNome.setText(dest.getNome());
-            txtCNPJ.setText(dest.getCnpj());
+            txtDocumento.setText(dest.getCnpj());
             txtCidade.setText(dest.getCidade());
             txtEstado.setText(dest.getEstado());
             txtTelefone.setText(dest.getTelefone());
             txtCEP.setText(dest.getCep());
         }
+        formatarCamposCadastroEdicao();
         TransicaoTelas.abrirComTitulo(formEditarCadastrar, "Editar " + AtributosGlobais.tabela);
     }//GEN-LAST:event_popEditarMousePressed
 
@@ -1687,20 +1479,21 @@ public class FormMinuta extends javax.swing.JFrame {
         //PRIMEIRO PAINEL - DADOS NOTA E MINUTA
         //variavel ireport, campo java
         parametrosRelatorio.put("notas", txtNF.getText());
-        parametrosRelatorio.put("nf_valor", txtValorNF.getText());
+        parametrosRelatorio.put("nf_valor", "R$ " + txtValorNF.getText());
         parametrosRelatorio.put("peso", txtPeso.getText());
         parametrosRelatorio.put("vol", Integer.parseInt(txtVolumes.getText()));
         parametrosRelatorio.put("cub", txtCubico.getText());
         parametrosRelatorio.put("nome_usuario", txtUsuario.getText());
         parametrosRelatorio.put("id_minuta", Integer.parseInt(txtMinuta.getText()));
         parametrosRelatorio.put("emissao", txtEmissao.getText());
-        parametrosRelatorio.put("minuta_valor", txtValorMinuta.getText());
+        parametrosRelatorio.put("minuta_valor", "R$ " + txtValorMinuta.getText());
+        parametrosRelatorio.put("frete", cmbFrete.getSelectedItem().toString());
 
         //SEGUNDO PAINEL - DADOS DO REMETENTE
         parametrosRelatorio.put("rem_razao", txtRemetente.getText());
         parametrosRelatorio.put("rem_endereco", txtEndereco1.getText());
         parametrosRelatorio.put("rem_cep", txtCEP1.getText());
-        parametrosRelatorio.put("rem_telefone", txtTelefone1.getText().isEmpty() ? " " : txtTelefone1.getText());
+        parametrosRelatorio.put("rem_telefone", txtTelefone1.getText());
         parametrosRelatorio.put("rem_cnpj", txtCNPJ1.getText());
         parametrosRelatorio.put("rem_cidade", txtCidade1.getText());
         parametrosRelatorio.put("rem_estado", txtEstado1.getText());
@@ -1710,22 +1503,22 @@ public class FormMinuta extends javax.swing.JFrame {
         parametrosRelatorio.put("dest_razao", txtDestinatario.getText());
         parametrosRelatorio.put("dest_endereco", txtEndereco2.getText());
         parametrosRelatorio.put("dest_cep", txtCEP2.getText());
-        parametrosRelatorio.put("dest_telefone", txtTelefone2.getText().isEmpty() ? " " : txtTelefone2.getText());
+        parametrosRelatorio.put("dest_telefone", txtTelefone2.getText());
         parametrosRelatorio.put("dest_cnpj", txtCNPJ2.getText());
         parametrosRelatorio.put("dest_cidade", txtCidade2.getText());
         parametrosRelatorio.put("dest_estado", txtEstado2.getText());
         parametrosRelatorio.put("dest_numero", txtNumero2.getText());
 
         //QUARTO PAINEL - OBSERVAÇÃO
-        parametrosRelatorio.put("obs", txtObservacao.getText().isEmpty() ? " " : txtObservacao.getText());
+        parametrosRelatorio.put("obs", txtObservacao.getText());
 
         imprimirMinuta(parametrosRelatorio, Integer.parseInt(txtMinuta.getText()));
     }//GEN-LAST:event_btnImprimirActionPerformed
 
     private void txtPesquisaKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisaKeyPressed
         //ATALHO PARA CADASTRO DE REMTENTES OU DESTINATARIOS NA TELA DE PESQUISA
-        if (evt.getKeyCode() == KeyEvent.VK_F4) {
-            formatarCamposPesquisa();
+        if (evt.getKeyCode() == KeyEvent.VK_F4) {            
+            formatarCamposCadastroEdicao();
             TransicaoTelas.abrirComTitulo(formEditarCadastrar, "Cadastrar " + AtributosGlobais.tabela);
         }
     }//GEN-LAST:event_txtPesquisaKeyPressed
@@ -1753,8 +1546,8 @@ public class FormMinuta extends javax.swing.JFrame {
      * @param evt
      */
     private void subCadastrarRemetentesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subCadastrarRemetentesActionPerformed
-        AtributosGlobais.tabela = "Remetente";
-        formatarCamposPesquisa();
+        AtributosGlobais.tabela = "Remetente";        
+        formatarCamposCadastroEdicao();
         TransicaoTelas.abrirComTitulo(formEditarCadastrar, "Cadastrar " + AtributosGlobais.tabela);
     }//GEN-LAST:event_subCadastrarRemetentesActionPerformed
 
@@ -1765,7 +1558,7 @@ public class FormMinuta extends javax.swing.JFrame {
      */
     private void subCadastrarDestinatariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subCadastrarDestinatariosActionPerformed
         AtributosGlobais.tabela = "Destinatario";
-        formatarCamposPesquisa();
+        formatarCamposCadastroEdicao();
         TransicaoTelas.abrirComTitulo(formEditarCadastrar, "Cadastrar " + AtributosGlobais.tabela);
     }//GEN-LAST:event_subCadastrarDestinatariosActionPerformed
 
@@ -1779,10 +1572,12 @@ public class FormMinuta extends javax.swing.JFrame {
             if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
                 if (formPesquisar.getTitle().equals("Consultar Remetente")) {
                     AtributosGlobais.ID_REMETENTE = (int) tblRemetenteOuDestinatario.getValueAt(tblRemetenteOuDestinatario.getSelectedRow(), 0);
-                    setPesquisa(AtributosGlobais.ID_REMETENTE);
+                    importarRemOuDest(AtributosGlobais.ID_REMETENTE);
+                    txtDestinatario.requestFocus();
                 } else {
                     AtributosGlobais.ID_DESTINATARIO = (int) tblRemetenteOuDestinatario.getValueAt(tblRemetenteOuDestinatario.getSelectedRow(), 0);
-                    setPesquisa(AtributosGlobais.ID_DESTINATARIO);
+                    importarRemOuDest(AtributosGlobais.ID_DESTINATARIO);
+                    txtRemetente.requestFocus();
                 }
                 txtPesquisa.setText(null);
                 formPesquisar.dispose();
@@ -1804,11 +1599,216 @@ public class FormMinuta extends javax.swing.JFrame {
 
     private void menuOcorrenciasMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menuOcorrenciasMousePressed
         FormOcorrencia formOc = new FormOcorrencia();
-        formOc.setLocation(this.getX()+20, this.getY()+20);
         formOc.setVisible(true);
     }//GEN-LAST:event_menuOcorrenciasMousePressed
 
+    private void cmbFreteKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_cmbFreteKeyReleased
+        if (cmbFrete.getSelectedIndex() == 0) {
+            if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+                cmbFrete.setPopupVisible(true);
+            }
+        }
+    }//GEN-LAST:event_cmbFreteKeyReleased
+
+    private void btnPesquisarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_btnPesquisarKeyPressed
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            btnPesquisar.doClick();
+        }
+    }//GEN-LAST:event_btnPesquisarKeyPressed
+
+//-------------------------------------- MÉTODOS PRÓPRIOS ----------------------------------------------------------------//
+    private void formatarCamposMinuta() {
+        ManipularCampos.formatarCampoNumericasVirgulas(txtNF, 33);
+        ManipularCampos.formatarCampoNumerico(txtVolumes, 7);
+    }
     
+    
+    /**
+     * Formata os campos do formEditarCadastrar
+     * - Telefone, Documento, Número (somente números);
+     * - Cidade, Estado (tudo menos número)
+     */
+    private void formatarCamposCadastroEdicao() {
+        ManipularCampos.formatarCampoNumerico(txtTelefone, 11);
+        ManipularCampos.formatarCampoNumerico(txtDocumento, 14);
+        ManipularCampos.formatarCampoNumerico(txtNumero, 6);   
+        ManipularCampos.formatarCampoNaoNumerico(txtCidade, 30);
+        ManipularCampos.formatarCampoNaoNumerico(txtEstado, 2);             
+    }
+
+
+    /**
+     * Ação do botão INCLUIR no FormMinuta.         
+     * - Habilita campos para preencher    
+     */
+    private void incluirMinuta() {
+        //SE CAMPOS AINDA NÃO ESTÃO LIMPOS, LIMPE-OS
+        if (!txtNF.getText().isEmpty()) {
+            ManipularCampos.limparCampos(Arrays.asList(txtNF, txtMinuta, txtValorNF, txtValorMinuta, txtPeso, txtVolumes, txtCubico,
+                    txtEmissao, txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtTelefone1, txtCEP1, txtCidade1,
+                    txtEstado1, txtDestinatario, txtCNPJ2, txtEndereco2, txtNumero2, txtTelefone2, txtCEP2, txtCidade2, txtEstado2,
+                    txtObservacao));
+        }
+
+        //HABILITA BOTÕES E CAMPOS NECESSÁRIOS PARA INCLUSÃO
+        List<Component> camposDesabilitar = Arrays.asList(txtNF, txtValorNF, txtPeso, txtVolumes, txtCubico, cmbFrete,
+                txtEmissao, txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtTelefone1, txtValorMinuta,
+                txtCEP1, txtCidade1, txtEstado1, txtDestinatario, txtCNPJ2, txtEndereco2, txtNumero2, txtTelefone2,
+                txtCEP2, txtCidade2, txtEstado2, txtObservacao, btnCancelar, btnRemetente, btnDestinatario,
+                btnSalvar);
+        ManipularCampos.habilitar_desabilitar(camposDesabilitar, true);
+
+        //RESTRINGE TECLAS PARA CADA CAMPO
+        formatarCamposMinuta();
+
+        //DESABILITA BOTÕES QUE NÃO DEVEM SER 
+        //PRECIONADOS DURANTE A INCLUSÃO
+        btnIncluir.setEnabled(false);
+        btnImprimir.setEnabled(false);
+
+        //INICIALIZA CAMPOS INFORMATIVOS E DESABILITADOS
+        txtMinuta.setText(String.valueOf(AtributosGlobais.minutaAtual));
+        txtEmissao.setText(java.text.DateFormat.getDateInstance(DateFormat.SHORT).format(new Date()));
+        //txtHora.setText(new SimpleDateFormat("kk:mm").format(new Date()));
+    }
+    
+    
+    /**
+     * Ação do botão CANCELAR no FormMinuta.
+     * - Limpa e desabilita os campos.
+     */
+    private void cancelarMinuta() {
+        //LIMPA OS CAMPOS
+        List<Component> camposLimpar = Arrays.asList(txtNF, txtMinuta, txtValorNF, txtValorMinuta, txtPeso, txtVolumes, txtCubico,
+                txtEmissao, txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtTelefone1, txtCEP1, txtCidade1,
+                txtEstado1, txtDestinatario, txtCNPJ2, txtEndereco2, txtNumero2, txtTelefone2, txtCEP2, txtCidade2, txtEstado2,
+                txtObservacao, cmbFrete);
+        ManipularCampos.limparCampos(camposLimpar);
+
+        //DESABILITA BOTÕES E CAMPOS
+        List<Component> camposDesabilitar = Arrays.asList(txtNF, txtValorNF, txtPeso, txtVolumes, txtCubico, cmbFrete,
+                txtEmissao, txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtTelefone1, txtValorMinuta,
+                txtCEP1, txtCidade1, txtEstado1, txtDestinatario, txtCNPJ2, txtEndereco2, txtNumero2, txtTelefone2,
+                txtCEP2, txtCidade2, txtEstado2, txtObservacao, btnCancelar, btnRemetente, btnDestinatario,
+                btnSalvar);
+        ManipularCampos.habilitar_desabilitar(camposDesabilitar, false);
+
+        //PREPARA PARA UMA PROXIMA INCLUSÃO
+        btnIncluir.setEnabled(true);
+    }
+    
+
+    /**
+     * Ação do botão SALVAR no FormMinuta.
+     * - Valida campos
+     * - Insert de Nota_Fiscal e Minuta.    
+     * - Habilita impressão instantânea
+     */
+    private void salvarMinuta() {
+        List<JTextField> camposValidar = Arrays.asList(txtNF, txtValorNF, txtPeso, txtVolumes,
+                txtEmissao, txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtCEP1, txtCidade1,
+                txtEstado1, txtDestinatario, txtCNPJ2, txtEndereco2, txtTelefone2, txtCEP2, txtCidade2, txtEstado2);
+
+        //SE NENHUM CAMPO OBRIGATÓRIO ESTA VAZIO
+        if (!ManipularCampos.camposVazios(camposValidar)) {
+            if (cmbFrete.getSelectedIndex() != 0) {
+
+                //CRIANDO OBJETO NOTA_FISCAL COM VALORES DOS CAMPOS
+                Nota_Fiscal nf = new Nota_Fiscal(Integer.parseInt(txtVolumes.getText()), txtCubico.getText(),
+                        txtPeso.getText(), txtValorNF.getText(), txtNF.getText());
+
+                //SE INSERÇÃO DA NOTA FISCAL NO BANCO FOI BEM SUCEDIDA
+                if (this.nfDAO.inserir(nf)) {
+
+                    //CRIANDO OBJETO MINUTA COM VALORES DOS CAMPOS E ATRIBUTOS GLOBAIS
+                    Minuta min = new Minuta(txtEmissao.getText(), txtValorMinuta.getText(), AtributosGlobais.usuario.getId(),
+                            AtributosGlobais.ID_DESTINATARIO, AtributosGlobais.ID_REMETENTE, txtObservacao.getText(),
+                            AtributosGlobais.ID_NF, cmbFrete.getSelectedItem().toString());
+                    min.setId(Integer.parseInt(txtMinuta.getText()));
+
+                    //SE INSERÇÃO DA MINUTA NO BANCO FOI BEM SUCEDIDA
+                    if (this.minDAO.inserir(min)) {
+
+                        //REABILITA BOTÃO DE INCLUIR PARA UMA PRÓXIMA INCLUSÃO
+                        btnImprimir.setEnabled(true);
+
+                        //HABILITA BOTÃO DE IMPRIMIR PARA UMA IMPRESSÃO INSTANTÂNEA
+                        btnIncluir.setEnabled(true);
+
+                        //DESABILITA TODOS OS CAMPOS PARA NÃO HAVER EDIÇÃO, MANTENDO OS DADOS PARA A IMPRESSÃO INSTANTANEA OPCIONAL
+                        ManipularCampos.habilitar_desabilitar(Arrays.asList(txtNF, txtValorNF, txtValorMinuta, txtPeso, txtVolumes,
+                                txtValorNF, txtRemetente, txtCNPJ1, txtEndereco1, txtNumero1, txtTelefone1, txtCEP1, txtCubico, cmbFrete,
+                                txtCidade1, txtEstado1, txtDestinatario, txtCNPJ2, txtEndereco2, txtNumero2, txtTelefone2, txtCEP2,
+                                txtCidade2, txtEstado2, txtObservacao, btnCancelar, btnSalvar, btnRemetente, btnDestinatario), false);
+
+                        //ATUALIZA O NÚMERO DA MINUTA
+                        AtributosGlobais.minutaAtual = Integer.parseInt(txtMinuta.getText());
+                    }
+                }
+            } //TIPO DE FRETE NÃO ESPECIFICADO (PAGO OU A PAGAR)
+            else {
+                Mensagens.erro_tipoFrete();
+                cmbFrete.requestFocus(true);
+            }
+        } //UM OU MAIS CAMPOS OBRIGATÓRIOS NÃO FOI(RAM) PREENCHIDO(S)
+        else {
+            Mensagens.erro_campoVazio();
+            txtNF.requestFocus(true);
+        }
+    }
+    
+    
+    private Map<String, Object> carregarDocumento(){
+        int id_minuta = (int) tblMinutas.getValueAt(tblMinutas.getSelectedRow(), 0);
+
+        Minuta min = this.minDAO.obter(id_minuta);
+        Remetente rem = this.remDAO.obter(min.getId_remetente());
+        Destinatario dest = this.destDAO.obter(min.getId_destinatario());
+        Nota_Fiscal nf = this.nfDAO.obter(min.getId_nf());
+        Usuario us = new UsuarioDAO().obter(min.getId_usuario());       
+        
+        Map<String, Object> parametrosRelatorio = new HashMap<>();
+        //PRIMEIRO PAINEL - DADOS NOTA E MINUTA
+        //variavel ireport, campo java
+        parametrosRelatorio.put("notas", nf.getNf());
+        parametrosRelatorio.put("nf_valor", "R$ " + nf.getValor());
+        parametrosRelatorio.put("peso", nf.getPeso());
+        parametrosRelatorio.put("vol", nf.getQtdVolumes());
+
+        parametrosRelatorio.put("cub", nf.getMetCubicos());
+        parametrosRelatorio.put("nome_usuario", us.getLogin());
+        parametrosRelatorio.put("id_minuta", min.getId());
+        parametrosRelatorio.put("emissao", min.getEmissao());
+        parametrosRelatorio.put("minuta_valor", "R$ " + min.getValor());
+        parametrosRelatorio.put("frete", min.getFrete());
+
+        //SEGUNDO PAINEL - DADOS DO REMETENTE
+        parametrosRelatorio.put("rem_razao", rem.getNome());
+        parametrosRelatorio.put("rem_endereco", rem.getEndereco());
+        parametrosRelatorio.put("rem_cep", rem.getCep());
+        parametrosRelatorio.put("rem_telefone", rem.getTelefone());
+        parametrosRelatorio.put("rem_cnpj", rem.getCnpj());
+        parametrosRelatorio.put("rem_cidade", rem.getCidade());
+        parametrosRelatorio.put("rem_estado", rem.getEstado());
+        parametrosRelatorio.put("rem_numero", rem.getNumero());
+
+        //TERCEIRO PAINEL - DADOS DO DESTINATARIO
+        parametrosRelatorio.put("dest_razao", dest.getNome());
+        parametrosRelatorio.put("dest_endereco", dest.getEndereco());
+        parametrosRelatorio.put("dest_cep", dest.getCep());
+        parametrosRelatorio.put("dest_telefone", dest.getTelefone());
+        parametrosRelatorio.put("dest_cnpj", dest.getCnpj());
+        parametrosRelatorio.put("dest_cidade", dest.getCidade());
+        parametrosRelatorio.put("dest_estado", dest.getEstado());
+        parametrosRelatorio.put("dest_numero", dest.getNumero());
+
+        //QUARTO PAINEL - OBSERVAÇÃO
+        parametrosRelatorio.put("obs", min.getObs()); 
+        
+        formConsultarMinutas.dispose();
+        return parametrosRelatorio;
+    }
+
     /**
      * Imprime a minuta atual, recém feita ainda em cache.
      */
@@ -1820,16 +1820,14 @@ public class FormMinuta extends javax.swing.JFrame {
                 JasperViewer jv = new JasperViewer(print, false);
 
                 //abrindo maximizado
-                jv.setExtendedState(JasperViewer.MAXIMIZED_BOTH);
+                //jv.setExtendedState(JasperViewer.MAXIMIZED_BOTH);
                 jv.setVisible(true);
 
                 jv.setTitle("Visualização da Minuta " + id_minuta);
                 //JasperViewer.viewReport(print, false);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception e) {                
                 System.out.println(e);
-                JOptionPane.showMessageDialog(null, "Não foi possível apresentar o documento.", "ERRO", JOptionPane.ERROR_MESSAGE);
-
+                Mensagens.erro_abrirMinuta();
             }
         }
 
@@ -1841,7 +1839,7 @@ public class FormMinuta extends javax.swing.JFrame {
      *
      * @param id
      */
-    public void setPesquisa(int id) {
+    public void importarRemOuDest(int id) {
         this.conex.connect();
 
         try {
@@ -1878,9 +1876,131 @@ public class FormMinuta extends javax.swing.JFrame {
             this.conex.disconnect();
         }
     }
+    
+    /**
+     * Ação do botão SALVAR do formCadastrar (Remetentes ou Destinatários)
+     * - Valida os campos
+     * - Insere ou altera registro no banco
+     * - Limpa os campos e fecha o form
+     */
+    private void salvarRemetenteDestinatario() {
+        List<JTextField> camposValidar = Arrays.asList(txtNome, txtCEP, txtDocumento, txtCidade, txtEndereco, txtEstado, txtNumero);
+        
+        //SE TODOS OS CAMPOS OBRIGATÓRIOS FORAM PREENCHIDOS
+        if (!ManipularCampos.camposVazios(camposValidar)) {
+            
+            //SE O FORM É DE CADASTRO É DE REMETENTE
+            if (formEditarCadastrar.getTitle().equals("Cadastrar Remetente")) {
+                
+                //INSTANCIA OBJETO DE REMETENTE COM VALORES DOS CAMPOS E ATRIBUTOS GLOBAIS
+                Remetente rem = new Remetente(txtEndereco.getText(), Integer.parseInt(txtNumero.getText()), txtNome.getText(), 
+                        txtDocumento.getText(), txtCidade.getText(), txtEstado.getText(), txtTelefone.getText(), txtCEP.getText());                
+                rem.setId(AtributosGlobais.ID_REMETENTE);
+                
+                //REGISTRA NOVO REMETENTE NO BANCO 
+                this.remDAO.inserir(rem);
 
+            } 
+            //SE O FORM É DE CADASTRO É DE DESTINATÁRIO
+            else if (formEditarCadastrar.getTitle().equals("Cadastrar Destinatario")) {
+                
+                //INSTANCIA OBJETO DE DESTINATARIO COM VALORES DOS CAMPOS E ATRIBUTOS GLOBAIS
+                Destinatario dest = new Destinatario(txtEndereco.getText(), Integer.parseInt(txtNumero.getText()), txtNome.getText(), 
+                        txtDocumento.getText(), txtCidade.getText(), txtEstado.getText(), txtTelefone.getText(), txtCEP.getText());
+                dest.setId(AtributosGlobais.ID_DESTINATARIO);
+                
+                //REGISTRA NOVO DESTINATARIO NO BANCO
+                this.destDAO.inserir(dest);
+
+            } 
+            //SE O FORM É DE EDIÇÃO DE REMETENTE
+            else if (formEditarCadastrar.getTitle().equals("Editar Remetente")) {
+                
+                //INSTANCIA OBJETO DE REMETENTE COM VALORES DOS CAMPOS E ATRIBUTOS GLOBAIS
+                Remetente rem = new Remetente(txtEndereco.getText(), Integer.parseInt(txtNumero.getText()), txtNome.getText(), 
+                        txtDocumento.getText(), txtCidade.getText(), txtEstado.getText(), txtTelefone.getText(), txtCEP.getText());
+                rem.setId(AtributosGlobais.ID_REMETENTE);
+                
+                 //ALTERA O REGISTRO NO BANCO
+                this.remDAO.alterar(rem);
+                    
+            } 
+            //SE O FORM É DE EDIÇÃO DE DESTINATARIO
+            else if (formEditarCadastrar.getTitle().equals("Editar Destinatario")) {
+                
+                //INSTANCIA OBJETO DE DESTINATARIO COM VALORES DOS CAMPOS E ATRIBUTOS GLOBAIS
+                Destinatario dest = new Destinatario(txtEndereco.getText(), Integer.parseInt(txtNumero.getText()), txtNome.getText(), 
+                          txtDocumento.getText(), txtCidade.getText(), txtEstado.getText(), txtTelefone.getText(), txtCEP.getText());
+                dest.setId(AtributosGlobais.ID_DESTINATARIO);
+                
+                //ALTERA O REGISTRO NO BANCO
+                this.destDAO.alterar(dest);                    
+            }
+            
+            //LIMPA OS CAMPOS DO FORM ATUAL
+            ManipularCampos.limparCampos(Arrays.asList(txtNome, txtEndereco, txtDocumento, txtTelefone, txtCEP, txtNumero, txtCidade, txtEstado));
+            
+            //FECHA A TELA E ATUALIZA TABELA PARA O FORM DE PESQUISA
+            tblDAO.atualizarTblRemOuDest((DefaultTableModel) tblRemetenteOuDestinatario.getModel(), null);
+            formEditarCadastrar.dispose();           
+        } 
+        //AO MENOS UM CAMPO OBRIGATÓRIO NÃO FOI PREENCHIDO
+        else {
+            Mensagens.erro_campoVazio();
+            txtNome.requestFocus(true);
+        }
+    }
     
     
+    /**
+     * Ação do botão CANCELAR no formConsultar
+     * - Valida campo Pesquisa;
+     * - Valida filtro
+     * - Consulta no BD e retorna na tabela.
+     */
+    private void cancelarConsulta(){
+       //SE CAMPO DE PESQUISA ESTA PREENCHIDO
+       if (!txtPesquisa1.getText().isEmpty()) {
+           
+            //SE ALGUM FILTRO ESTA SELECIONADO
+            if (filtros.getSelection() != null) {
+                
+                //GUARDA O FILTRO SELECIONADO
+                Object filtro = filtros.getSelection().getActionCommand();
+                
+                //SE O FILTRO SELECINADO É NÚMERO
+                if (filtros.getSelection() == radioNumero) {
+                    filtro = Integer.parseInt(filtros.getSelection().getActionCommand());
+                }
+                
+                //ELABORA COMANDO SQL COM O FILTRO SELECIONADO E O VALOR NO CAMPO DE PESQUISA
+                String sql = "SELECT M.ID_MINUTA, R.NOME, D.NOME, N.NF "
+                        + "FROM MINUTA M, REMETENTE R, DESTINATARIO D, NOTA_FISCAL N "
+                        + "WHERE M.ID_NF = N.ID_NF AND M.ID_REMETENTE = R.ID_REMETENTE AND "
+                        + "M.ID_DESTINATARIO = D.ID_DESTINATARIO AND " + filtro + " LIKE '"
+                        + txtPesquisa1.getText().toUpperCase() + "%' ORDER BY 1 DESC";
+                
+                //ATUALIZA A TABELA E REFOCA NO CAMPO DE PESQUISA
+                tblDAO.atualizarTblMinutas((DefaultTableModel) tblMinutas.getModel(), sql);
+                txtPesquisa1.requestFocus();
+            }
+        }    
+    }
+    
+    
+    /**
+     * Ação do botão CANCELAR no formCadastrar (Remententes ou Destinatários)
+     * - Limpa os campos e foca no 1º textfield da tela
+     */
+    private void cancelarCadastroEdicao(){
+        List<Component> camposLimpar = Arrays.asList(txtNome, txtEndereco, txtCidade, txtEstado, txtNumero, txtTelefone, txtCEP, txtDocumento);
+    
+        ManipularCampos.limparCampos(camposLimpar); 
+        formatarCamposCadastroEdicao();
+        txtNome.requestFocus();
+    }
+
+//-------------------------------------- MAIN ----------------------------------------------------------------------------//
     /**
      * @param args the command line arguments
      */
@@ -1941,6 +2061,7 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JButton btnRemetente;
     private javax.swing.JButton btnSalvar;
     private javax.swing.JButton btnSalvar1;
+    private javax.swing.JComboBox<String> cmbFrete;
     private javax.swing.ButtonGroup filtros;
     private javax.swing.JDialog formConsultarMinutas;
     private javax.swing.JDialog formEditarCadastrar;
@@ -1956,7 +2077,6 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JLabel lblCEP;
     private javax.swing.JLabel lblCEP1;
     private javax.swing.JLabel lblCEP2;
-    private javax.swing.JLabel lblCNPJ;
     private javax.swing.JLabel lblCNPJ1;
     private javax.swing.JLabel lblCNPJ2;
     private javax.swing.JLabel lblCidade;
@@ -1964,6 +2084,7 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JLabel lblCidade2;
     private javax.swing.JLabel lblCubico;
     private javax.swing.JLabel lblDestinatario2;
+    private javax.swing.JLabel lblDocumento;
     private javax.swing.JLabel lblEmissao;
     private javax.swing.JLabel lblEndereco;
     private javax.swing.JLabel lblEndereco1;
@@ -2013,7 +2134,6 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JFormattedTextField txtCEP;
     private javax.swing.JTextField txtCEP1;
     private javax.swing.JTextField txtCEP2;
-    private javax.swing.JFormattedTextField txtCNPJ;
     private javax.swing.JTextField txtCNPJ1;
     private javax.swing.JTextField txtCNPJ2;
     private javax.swing.JTextField txtCidade;
@@ -2021,6 +2141,7 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JTextField txtCidade2;
     private javax.swing.JFormattedTextField txtCubico;
     private javax.swing.JTextField txtDestinatario;
+    private javax.swing.JTextField txtDocumento;
     private javax.swing.JFormattedTextField txtEmissao;
     private javax.swing.JTextField txtEndereco;
     private javax.swing.JTextField txtEndereco1;
@@ -2039,7 +2160,7 @@ public class FormMinuta extends javax.swing.JFrame {
     private javax.swing.JTextField txtPesquisa;
     private javax.swing.JTextField txtPesquisa1;
     private javax.swing.JTextField txtRemetente;
-    private javax.swing.JFormattedTextField txtTelefone;
+    private javax.swing.JTextField txtTelefone;
     private javax.swing.JTextField txtTelefone1;
     private javax.swing.JTextField txtTelefone2;
     private javax.swing.JTextField txtUsuario;
